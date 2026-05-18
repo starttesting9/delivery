@@ -45,16 +45,20 @@ function parseJwt(token) {
 
 async function api(action, data = {}) {
 
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
+  const formData = new URLSearchParams();
+
+  formData.append(
+    'payload',
+    JSON.stringify({
       token: authToken,
       action,
       data
     })
+  );
+
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    body: formData
   });
 
   return response.json();
