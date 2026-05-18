@@ -27,7 +27,7 @@ async function handleCredentialResponse(response) {
     .classList.remove('hidden');
 
   document.getElementById('userInfo')
-    .innerText = payload.name;
+    .innerText = payload.user.name;
 
   loadShipments();
 }
