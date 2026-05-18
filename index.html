@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Delivery App</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <div class="container">
+
+    <h1>Delivery App</h1>
+
+    <div id="loginBlock">
+      <div id="g_id_onload"
+        data-client_id="758097653129-i5cda00k5b73uudvmmalj2jdvk70t5jr.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse">
+      </div>
+
+      <div class="g_id_signin"></div>
+    </div>
+
+    <div id="app" class="hidden">
+
+      <div class="topbar">
+        <div id="userInfo"></div>
+
+        <button id="loadBtn">
+          Оновити список
+        </button>
+      </div>
+
+      <div class="form">
+
+        <input
+          type="text"
+          id="product"
+          placeholder="Продукт"
+        >
+
+        <input
+          type="number"
+          id="quantity"
+          placeholder="Кількість"
+        >
+
+        <input
+          type="text"
+          id="destination"
+          placeholder="Куди"
+        >
+
+        <textarea
+          id="comment"
+          placeholder="Коментар"
+        ></textarea>
+
+        <button id="createBtn">
+          Створити доставку
+        </button>
+
+      </div>
+
+      <div id="shipments"></div>
+
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+
+</body>
+</html>
