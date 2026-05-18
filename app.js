@@ -3,13 +3,22 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbz7tPrVsKyZ85-ga8iplEC7
 let authToken = null;
 let currentUser = null;
 
-function handleCredentialResponse(response) {
+async function handleCredentialResponse(response) {
 
   authToken = response.credential;
 
   const payload = parseJwt(authToken);
 
   currentUser = payload;
+
+  const result = await api('auth');
+
+  if (result.error) {
+
+    alert('Access denied');
+
+    return;
+  }
 
   document.getElementById('loginBlock')
     .classList.add('hidden');
