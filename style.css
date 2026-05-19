@@ -230,7 +230,7 @@ button:hover {
   opacity: 0;
   transform: translateY(12px);
 
-  animation: cardAppear 0.4s ease forwards;
+  animation: cardAppear 0.70s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes formAppear {
