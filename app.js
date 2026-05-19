@@ -106,13 +106,11 @@ async function loadShipments() {
 
   loadIcon.classList.add('loading');
 
-  loadIcon.classList.remove('loading');
-  
   const result = await api('getShipments');
 
   renderShipments(result || []);
 
-  loadBtn.classList.remove('loading');
+  loadIcon.classList.remove('loading');
 }
 
 function renderShipments(items) {
