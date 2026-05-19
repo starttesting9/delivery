@@ -102,11 +102,15 @@ async function createShipment() {
 
 async function loadShipments() {
 
+  const loadBtn = document.getElementById('loadBtn');
+
+  loadBtn.classList.add('loading');
+
   const result = await api('getShipments');
 
-  console.log(result);
-
   renderShipments(result || []);
+
+  loadBtn.classList.remove('loading');
 }
 
 function renderShipments(items) {
