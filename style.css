@@ -40,6 +40,13 @@ button {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  transition: opacity 0.2s;
+}
+
+#shipmentsLoader {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
 }
 
 .card {
