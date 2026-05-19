@@ -7,29 +7,34 @@ async function handleCredentialResponse(response) {
 
   authToken = response.credential;
 
-  const payload = parseJwt(authToken);
-
-  currentUser = payload;
-
   const result = await api('auth');
 
   if (result.error) {
 
-    alert('Access denied');
+    document.getElementById('accessDenied')
+      .classList.remove('hidden');
 
     return;
   }
 
+  currentUser = result.user;
+
   document.getElementById('loginBlock')
+    .classList.add('hidden');
+
+  document.getElementById('loader')
+    .classList.remove('hidden');
+
+  document.getElementById('userInfo')
+    .innerText = currentUser.name;
+
+  await loadShipments();
+
+  document.getElementById('loader')
     .classList.add('hidden');
 
   document.getElementById('app')
     .classList.remove('hidden');
-
-  document.getElementById('userInfo')
-    .innerText = result.user.name
-
-  loadShipments();
 }
 
 function parseJwt(token) {
@@ -98,7 +103,7 @@ async function loadShipments() {
 
   console.log(result);
 
-  renderShipments(result);
+  renderShipments(result || []);
 }
 
 function renderShipments(items) {
