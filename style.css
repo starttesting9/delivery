@@ -154,8 +154,31 @@ button {
 }
 
 #userInfo {
-  font-size: 20px;
-  font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+#loadBtn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid #e7e7e7;
+  background: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+
+  transition: 0.2s;
+}
+
+#loadBtn:hover {
+  background: #f8f8f8;
 }
 
 .form {
