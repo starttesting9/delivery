@@ -1,14 +1,17 @@
 body {
   margin: 0;
-  padding: 20px;
   background: #f4f4f4;
-  font-family: Arial, sans-serif;
-  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 .container {
   max-width: 900px;
   margin: 0 auto;
+  padding: 20px;
 }
 
 .hidden {
@@ -66,16 +69,19 @@ button {
 
 .login-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 380px;
   background: white;
   border-radius: 20px;
   padding: 40px;
   box-sizing: border-box;
+  box-shadow:
+    0 2px 10px rgba(0,0,0,0.03);
 }
 
 .login-logo {
-  font-size: 42px;
-  font-weight: bold;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -1px;
   margin-bottom: 10px;
 }
 
@@ -146,4 +152,12 @@ button:hover {
 
 .card {
   padding: 20px;
+}
+
+@media (max-width: 600px) {
+
+  .login-logo {
+    font-size: 28px;
+  }
+
 }
