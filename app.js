@@ -7,23 +7,26 @@ async function handleCredentialResponse(response) {
 
   authToken = response.credential;
 
+  document.getElementById('loginBlock')
+    .classList.add('hidden');
+
+  document.getElementById('loader')
+    .classList.remove('hidden');
+
   const result = await api('auth');
 
   if (result.error) {
 
-    document.getElementById('accessDenied')
+    document.getElementById('loader')
+      .classList.add('hidden');
+
+    document.getElementById('deniedScreen')
       .classList.remove('hidden');
 
     return;
   }
 
   currentUser = result.user;
-
-  document.getElementById('loginBlock')
-    .classList.add('hidden');
-
-  document.getElementById('loader')
-    .classList.remove('hidden');
 
   document.getElementById('userInfo')
     .innerText = currentUser.name;
