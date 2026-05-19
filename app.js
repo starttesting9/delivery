@@ -104,11 +104,29 @@ async function loadShipments() {
 
   const loadIcon = document.getElementById('loadIcon');
 
+  const shipments = document.getElementById('shipments');
+
+  const shipmentsLoader = document.getElementById('shipmentsLoader');
+
   loadIcon.classList.add('loading');
+
+  shipments.style.opacity = '0';
+
+  await new Promise(resolve =>
+    setTimeout(resolve, 200)
+  );
+
+  shipments.innerHTML = '';
+
+  shipmentsLoader.classList.remove('hidden');
 
   const result = await api('getShipments');
 
+  shipmentsLoader.classList.add('hidden');
+
   renderShipments(result || []);
+
+  shipments.style.opacity = '1';
 
   loadIcon.classList.remove('loading');
 }
