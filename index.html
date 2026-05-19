@@ -12,49 +12,51 @@
 </head>
 <body>
 
-  <div class="container">
+  <div id="loginBlock" class="login-screen">
 
-    <h1>Delivery</h1>
+    <div class="login-card">
 
-    <div id="loginBlock" class="login-screen">
-
-      <div class="login-card">
-    
-        <div class="login-logo">
-          Delivery
-        </div>
-    
-        <div class="login-text">
-          Система доставки
-        </div>
-    
-        <div id="g_id_onload"
-          data-client_id="758097653129-i5cda00k5b73uudvmmalj2jdvk70t5jr.apps.googleusercontent.com"
-          data-callback="handleCredentialResponse">
-        </div>
-    
-        <div class="g_id_signin"></div>
-    
-        <div id="accessDenied" class="hidden">
-          Немає доступу
-        </div>
-    
+      <div class="login-logo">
+        Delivery
       </div>
-    
+
+      <div class="login-text">
+        Система доставки
+      </div>
+
+      <div id="g_id_onload"
+        data-client_id="758097653129-i5cda00k5b73uudvmmalj2jdvk70t5jr.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse">
+      </div>
+
+      <div class="g_id_signin"></div>
+
+      <div id="accessDenied" class="hidden">
+        Немає доступу
+      </div>
+
     </div>
 
-    <div id="loader" class="hidden">
-      <div class="loader-spinner"></div>
-    </div>
+  </div>
 
-    <div id="app" class="hidden">
+  <div id="loader" class="hidden">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <div id="app" class="hidden">
+
+    <div class="container">
+
+      <h1>Delivery</h1>
 
       <div class="topbar">
+
         <div id="userInfo"></div>
 
         <button id="loadBtn">
           Оновити список
         </button>
+
       </div>
 
       <div class="form">
