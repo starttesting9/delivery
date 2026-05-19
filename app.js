@@ -115,11 +115,13 @@ function renderShipments(items) {
 
   container.innerHTML = '';
 
-  items.forEach(item => {
+  items.forEach((item, index) => {
 
     const div = document.createElement('div');
 
     div.className = 'card';
+
+    div.style.animationDelay = `${index * 70}ms`;
 
     div.innerHTML = `
       <div class="card-title">
