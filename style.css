@@ -9,7 +9,7 @@ body {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 860px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -22,13 +22,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   margin-bottom: 20px;
 }
 
@@ -53,6 +46,31 @@ button {
   background: white;
   padding: 24px;
   border-radius: 18px;
+
+  opacity: 0;
+  transform: translateY(12px);
+
+  animation:
+    cardAppear 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+input:focus,
+textarea:focus {
+
+  outline: none;
+
+  border-color: #d0d0d0;
+
+  box-shadow:
+    0 0 0 4px rgba(0,0,0,0.03);
 }
 
 .card-title {
@@ -171,7 +189,7 @@ button {
 }
 
 .shipments-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
 }
 
@@ -201,12 +219,6 @@ button {
   animation: rotate 1s linear infinite;
 }
 
-.form {
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
-}
-
 input,
 textarea,
 button {
@@ -218,14 +230,6 @@ button {
 
 button {
   transition: 0.2s;
-}
-
-button:hover {
-  background: #f5f5f5;
-}
-
-.card {
-  padding: 20px;
 }
 
 #createBtn {
@@ -268,20 +272,13 @@ button:hover {
   background: white;
   padding: 20px;
   border-radius: 16px;
-
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
   opacity: 0;
   transform: translateY(10px);
-
   animation: formAppear 0.4s ease forwards;
-}
-
-.card {
-  padding: 20px;
-
-  opacity: 0;
-  transform: translateY(12px);
-
-  animation: cardAppear 0.70s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes formAppear {
