@@ -104,8 +104,6 @@ async function createShipment() {
   const status = document.getElementById('status').value;
   const comment = document.getElementById('comment').value.trim();
 
-  // Валідація
-
   if (!product) {
     alert('Вкажіть продукт');
     return;
@@ -157,9 +155,9 @@ async function createShipment() {
 
   setCurrentDateTime();
   
-  await loadShipments();
-  
   createBtn.classList.remove('loading');
+
+  await loadShipments();
 }
 
 async function loadShipments() {
