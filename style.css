@@ -31,11 +31,17 @@ button,
 select {
   padding: 10px;
   font-size: 14px;
+}
+
+select {
   appearance: none;
+  padding:
+    12px 40px 12px 10px;
 }
 
 .select-wrap {
   position: relative;
+  width: 100%;
 }
 
 .select-wrap::after {
