@@ -27,7 +27,8 @@ body {
 
 input,
 textarea,
-button {
+button,
+select {
   padding: 12px;
   font-size: 16px;
 }
@@ -220,7 +221,8 @@ textarea:focus {
 
 input,
 textarea,
-button {
+button,
+select {
   border: 1px solid #ddd;
   border-radius: 10px;
   box-sizing: border-box;
