@@ -128,8 +128,6 @@ function validateLength(value, min, max) {
 
 async function createShipment() {
 
-  hideFormError();
-
   const createdAt = document.getElementById('createdAt').value;
   const product = document.getElementById('product').value.trim();
   const method = document.getElementById('method').value.trim();
