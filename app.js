@@ -13,8 +13,14 @@ function setCurrentDateTime() {
     now.getMinutes() - now.getTimezoneOffset()
   );
 
-  document.getElementById('createdAt').value =
+  const formatted =
     now.toISOString().slice(0, 16);
+
+  document.getElementById('createdAt').value =
+    formatted;
+
+  document.getElementById('createdAt').max =
+    formatted;
 }
 
 async function handleCredentialResponse(response) {
@@ -95,7 +101,30 @@ async function api(action, data = {}) {
   return response.json();
 }
 
+function showFormError(message) {
+
+  const error = document.getElementById('formError');
+
+  error.innerText = message;
+
+  error.classList.remove('hidden');
+}
+
+function hideFormError() {
+
+  document.getElementById('formError')
+    .classList.add('hidden');
+}
+
+function validateLength(value, min, max) {
+
+  return value.length >= min &&
+         value.length <= max;
+}
+
 async function createShipment() {
+
+  hideFormError();
 
   const createdAt = document.getElementById('createdAt').value;
   const product = document.getElementById('product').value.trim();
@@ -105,27 +134,54 @@ async function createShipment() {
   const comment = document.getElementById('comment').value.trim();
 
   if (!product) {
-    alert('Вкажіть продукт');
+    showFormError('Вкажіть продукт');
+    return;
+  }
+
+  if (!validateLength(product, 2, 80)) {
+
+    showFormError(
+      'Продукт повинен містити від 2 до 80 символів'
+    );
+  
     return;
   }
 
   if (!createdAt) {
-    alert('Вкажіть дату');
+    showFormError('Вкажіть дату');
     return;
   }
 
   if (!method) {
-    alert('Вкажіть тип доставки');
+    showFormError('Вкажіть тип доставки');
+    return;
+  }
+
+  if (!validateLength(method, 2, 40)) {
+
+    showFormError(
+      'Тип доставки повинен містити від 2 до 40 символів'
+    );
+  
     return;
   }
 
   if (!destination) {
-    alert('Вкажіть куди');
+    showFormError('Вкажіть куди');
+    return;
+  }
+
+  if (!validateLength(destination, 2, 180)) {
+
+    showFormError(
+      'Поле "Куди" повинно містити від 2 до 180 символів'
+    );
+  
     return;
   }
 
   if (!status) {
-    alert('Вкажіть статус');
+    showFormError('Вкажіть статус');
     return;
   }
 
