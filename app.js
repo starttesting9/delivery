@@ -161,3 +161,35 @@ document.getElementById('createBtn')
 
 document.getElementById('loadBtn')
   .addEventListener('click', loadShipments);
+
+const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+window.addEventListener('scroll', () => {
+
+  if (window.scrollY > 300) {
+
+    scrollTopBtn.classList.add('show');
+    scrollTopBtn.classList.remove('hidden');
+
+  } else {
+
+    scrollTopBtn.classList.remove('show');
+
+    setTimeout(() => {
+
+      if (window.scrollY <= 300) {
+        scrollTopBtn.classList.add('hidden');
+      }
+
+    }, 250);
+  }
+});
+
+scrollTopBtn.addEventListener('click', () => {
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+
+});
