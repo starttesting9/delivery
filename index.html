@@ -101,25 +101,29 @@
           placeholder="Куди"
         >
 
-        <select id="status">
+        <div class="select-wrap">
 
-          <option value="">
-            Статус
-          </option>
+          <select id="status">
         
-          <option value="new">
-            Нове
-          </option>
+            <option value="" disabled selected>
+              Оберіть статус
+            </option>
+
+            <option value="new">
+              Нове
+            </option>
         
-          <option value="done">
-            Виконано
-          </option>
+            <option value="done">
+              Виконано
+            </option>
         
-          <option value="lost">
-            Втрачено
-          </option>
+            <option value="lost">
+              Втрачено
+            </option>
         
-        </select>
+          </select>
+        
+        </div>
 
         <textarea
           id="comment"
