@@ -34,7 +34,10 @@ select {
 }
 
 select {
+  width: 100%;
+  display: block;
   appearance: none;
+  line-height: 1.2;
   padding:
     12px 40px 12px 10px;
 }
