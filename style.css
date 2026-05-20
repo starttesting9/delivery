@@ -296,6 +296,56 @@ button {
   }
 }
 
+#scrollTopBtn {
+  position: fixed;
+
+  right: 24px;
+  bottom: 24px;
+
+  width: 44px;
+  height: 44px;
+
+  border: 1px solid #e7e7e7;
+  border-radius: 14px;
+
+  background: rgba(255,255,255,0.92);
+
+  backdrop-filter: blur(10px);
+
+  font-size: 20px;
+  font-weight: 600;
+
+  color: #444;
+
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.06);
+
+  z-index: 1000;
+
+  opacity: 0;
+  transform: translateY(10px);
+
+  transition:
+    opacity 0.25s,
+    transform 0.25s,
+    background 0.2s,
+    color 0.2s;
+}
+
+#scrollTopBtn.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#scrollTopBtn:hover {
+  background: #fff;
+  color: #111;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 @media (max-width: 600px) {
 
   .card {
@@ -336,7 +386,7 @@ button {
   
     padding: 6px 12px;
   
-    border-radius: 999px;
+    border-radius: 12px;
   
     background: #fff;
   
