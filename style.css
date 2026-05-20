@@ -282,6 +282,23 @@ button {
   animation: formAppear 0.4s ease forwards;
 }
 
+#formError {
+
+  background: #fff5f5;
+
+  border: 1px solid #ffd7d7;
+
+  color: #cc4444;
+
+  border-radius: 12px;
+
+  padding: 12px 14px;
+
+  font-size: 13px;
+
+  line-height: 1.4;
+}
+
 @keyframes formAppear {
 
   to {
