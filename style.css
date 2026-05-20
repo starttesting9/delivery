@@ -299,11 +299,11 @@ button {
 #scrollTopBtn {
   position: fixed;
 
-  right: 24px;
-  bottom: 24px;
+  right: 18px;
+  bottom: 18px;
 
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
 
   border: 1px solid #e7e7e7;
   border-radius: 14px;
