@@ -204,26 +204,18 @@ textarea:focus {
   border: none;
   background: transparent;
 
-  color: #666;
+  color: #888;
 
   padding: 0;
 
   font-size: 14px;
-
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-weight: 500;
 
   transition: 0.2s;
 }
 
 #loadBtn:hover {
   color: #111;
-  background: transparent;
-}
-
-.loading {
-  animation: rotate 1s linear infinite;
 }
 
 input,
@@ -301,17 +293,6 @@ button {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes rotate {
-
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
   }
 }
 
