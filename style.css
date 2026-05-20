@@ -305,20 +305,26 @@ button {
   width: 40px;
   height: 40px;
 
-  border: 1px solid #e7e7e7;
+  border: 1px solid #ececec;
   border-radius: 14px;
 
-  background: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.82);
 
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
 
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
 
-  color: #444;
+  color: #555;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-bottom: 2px;
 
   box-shadow:
-    0 4px 12px rgba(0,0,0,0.06);
+    0 2px 8px rgba(0,0,0,0.04);
 
   z-index: 1000;
 
