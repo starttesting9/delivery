@@ -307,4 +307,31 @@ button {
     font-size: 28px;
   }
 
+  .container {
+    padding: 16px;
+  }
+
+  #userInfo {
+    font-size: 24px;
+  }
+
+  .shipments-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  #loadBtn {
+
+    padding: 6px 12px;
+
+    border-radius: 999px;
+
+    background: white;
+
+    border: 1px solid #ececec;
+
+    font-size: 13px;
+  }
+
 }
