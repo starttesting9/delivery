@@ -83,15 +83,49 @@ async function api(action, data = {}) {
 
 async function createShipment() {
 
-  const product = document.getElementById('product').value;
-  const quantity = document.getElementById('quantity').value;
-  const destination = document.getElementById('destination').value;
-  const comment = document.getElementById('comment').value;
+  const createdAt = document.getElementById('createdAt').value;
+  const product = document.getElementById('product').value.trim();
+  const method = document.getElementById('method').value.trim();
+  const destination = document.getElementById('destination').value.trim();
+  const status = document.getElementById('status').value;
+  const comment = document.getElementById('comment').value.trim();
+
+  // Валідація
+
+  if (!product) {
+    alert('Вкажіть продукт');
+    return;
+  }
+
+  if (!createdAt) {
+    alert('Вкажіть дату');
+    return;
+  }
+
+  if (!method) {
+    alert('Вкажіть тип доставки');
+    return;
+  }
+
+  if (!destination) {
+    alert('Вкажіть куди');
+    return;
+  }
+
+  if (!status) {
+    alert('Вкажіть статус');
+    return;
+  }
 
   const result = await api('createShipment', {
+
+    name: currentUser.name,
+
+    createdAt,
     product,
-    quantity,
+    method,
     destination,
+    status,
     comment
   });
 
