@@ -282,21 +282,51 @@ button {
   animation: formAppear 0.4s ease forwards;
 }
 
-#formError {
+#toast {
 
-  background: #fff5f5;
+  position: fixed;
 
-  border: 1px solid #ffd7d7;
+  left: 50%;
+  bottom: 24px;
 
-  color: #cc4444;
+  transform:
+    translateX(-50%)
+    translateY(20px);
 
-  border-radius: 12px;
+  background: rgba(25,25,25,0.92);
 
-  padding: 12px 14px;
+  color: white;
+
+  padding: 12px 16px;
+
+  border-radius: 14px;
 
   font-size: 13px;
+  font-weight: 500;
 
-  line-height: 1.4;
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.12);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+
+  z-index: 9999;
+}
+
+#toast.show {
+
+  opacity: 1;
+
+  transform:
+    translateX(-50%)
+    translateY(0);
 }
 
 @keyframes formAppear {
