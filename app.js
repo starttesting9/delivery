@@ -102,13 +102,9 @@ async function createShipment() {
 
 async function loadShipments() {
 
-  const loadIcon = document.getElementById('loadIcon');
-
   const shipments = document.getElementById('shipments');
 
   const shipmentsLoader = document.getElementById('shipmentsLoader');
-
-  loadIcon.classList.add('loading');
 
   shipments.style.opacity = '0';
 
@@ -127,8 +123,6 @@ async function loadShipments() {
   renderShipments(result || []);
 
   shipments.style.opacity = '1';
-
-  loadIcon.classList.remove('loading');
 }
 
 function renderShipments(items) {
