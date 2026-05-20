@@ -85,9 +85,14 @@
         >
 
         <input
-          type="number"
-          id="quantity"
-          placeholder="Кількість"
+          type="datetime-local"
+          id="createdAt"
+        >
+
+        <input
+          type="text"
+          id="method"
+          placeholder="Тип доставки"
         >
 
         <input
@@ -95,6 +100,26 @@
           id="destination"
           placeholder="Куди"
         >
+
+        <select id="status">
+
+          <option value="">
+            Статус
+          </option>
+        
+          <option value="new">
+            Нове
+          </option>
+        
+          <option value="done">
+            Виконано
+          </option>
+        
+          <option value="lost">
+            Втрачено
+          </option>
+        
+        </select>
 
         <textarea
           id="comment"
