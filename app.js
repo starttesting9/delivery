@@ -3,6 +3,20 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbz7tPrVsKyZ85-ga8iplEC7
 let authToken = null;
 let currentUser = null;
 
+setCurrentDateTime();
+
+function setCurrentDateTime() {
+
+  const now = new Date();
+
+  now.setMinutes(
+    now.getMinutes() - now.getTimezoneOffset()
+  );
+
+  document.getElementById('createdAt').value =
+    now.toISOString().slice(0, 16);
+}
+
 async function handleCredentialResponse(response) {
 
   authToken = response.credential;
@@ -117,6 +131,10 @@ async function createShipment() {
     return;
   }
 
+  const createBtn = document.getElementById('createBtn');
+
+  createBtn.classList.add('loading');
+
   const result = await api('createShipment', {
 
     name: currentUser.name,
@@ -131,7 +149,17 @@ async function createShipment() {
 
   console.log(result);
 
-  loadShipments();
+  document.getElementById('product').value = '';
+  document.getElementById('method').value = '';
+  document.getElementById('destination').value = '';
+  document.getElementById('status').value = '';
+  document.getElementById('comment').value = '';
+
+  setCurrentDateTime();
+  
+  await loadShipments();
+  
+  createBtn.classList.remove('loading');
 }
 
 async function loadShipments() {
