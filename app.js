@@ -101,19 +101,23 @@ async function api(action, data = {}) {
   return response.json();
 }
 
-function showFormError(message) {
+let toastTimeout = null;
 
-  const error = document.getElementById('formError');
+function showToast(message) {
 
-  error.innerText = message;
+  const toast = document.getElementById('toast');
 
-  error.classList.remove('hidden');
-}
+  toast.innerText = message;
 
-function hideFormError() {
+  toast.classList.add('show');
 
-  document.getElementById('formError')
-    .classList.add('hidden');
+  clearTimeout(toastTimeout);
+
+  toastTimeout = setTimeout(() => {
+
+    toast.classList.remove('show');
+
+  }, 2500);
 }
 
 function validateLength(value, min, max) {
@@ -134,13 +138,13 @@ async function createShipment() {
   const comment = document.getElementById('comment').value.trim();
 
   if (!product) {
-    showFormError('Вкажіть продукт');
+    showToast('Вкажіть продукт');
     return;
   }
 
   if (!validateLength(product, 2, 80)) {
 
-    showFormError(
+    showToast(
       'Продукт повинен містити від 2 до 80 символів'
     );
   
@@ -148,18 +152,18 @@ async function createShipment() {
   }
 
   if (!createdAt) {
-    showFormError('Вкажіть дату');
+    showToast('Вкажіть дату');
     return;
   }
 
   if (!method) {
-    showFormError('Вкажіть тип доставки');
+    showToast('Вкажіть тип доставки');
     return;
   }
 
   if (!validateLength(method, 2, 40)) {
 
-    showFormError(
+    showToast(
       'Тип доставки повинен містити від 2 до 40 символів'
     );
   
@@ -167,13 +171,13 @@ async function createShipment() {
   }
 
   if (!destination) {
-    showFormError('Вкажіть куди');
+    showToast('Вкажіть куди');
     return;
   }
 
   if (!validateLength(destination, 2, 180)) {
 
-    showFormError(
+    showToast(
       'Поле "Куди" повинно містити від 2 до 180 символів'
     );
   
@@ -181,7 +185,7 @@ async function createShipment() {
   }
 
   if (!status) {
-    showFormError('Вкажіть статус');
+    showToast('Вкажіть статус');
     return;
   }
 
