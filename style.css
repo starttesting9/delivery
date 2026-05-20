@@ -29,8 +29,8 @@ input,
 textarea,
 button,
 select {
-  padding: 12px;
-  font-size: 16px;
+  padding: 10px;
+  font-size: 14px;
 }
 
 button {
