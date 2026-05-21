@@ -352,20 +352,24 @@ function renderShipments(items) {
 
       <div class="card-main">
 
-        <div class="summary-item">
-          🚁 ${item.product}
-        </div>
-        
-        <span class="card-dot">•</span>
-        
-        <div class="summary-item">
-          ${item.method}
-        </div>
-        
-        <span class="card-dot">•</span>
-        
-        <div class="summary-item">
-          ${item.status}
+        <div class="card-summary">
+      
+          <div class="summary-item">
+            🚁 ${item.product}
+          </div>
+      
+          <span class="card-dot">•</span>
+      
+          <div class="summary-item">
+            ${item.method}
+          </div>
+      
+          <span class="card-dot">•</span>
+      
+          <div class="summary-item">
+            ${item.status}
+          </div>
+      
         </div>
       
         <div class="card-date">
