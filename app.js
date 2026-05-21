@@ -295,7 +295,7 @@ function renderShipments(items) {
       </div>
 
       <div><b>ID:</b> ${item.id}</div>
-      <div><b>Кількість:</b> ${item.quantity}</div>
+      <div><b>Тип доставки:</b> ${item.method}</div>
       <div><b>Куди:</b> ${item.destination}</div>
       <div><b>Статус:</b> ${item.status}</div>
       <div><b>Дата:</b> ${item.createdAt}</div>
