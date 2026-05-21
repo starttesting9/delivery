@@ -201,9 +201,13 @@ textarea:focus {
 }
 
 .card-destination {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-main {
