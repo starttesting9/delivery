@@ -303,7 +303,7 @@ textarea:focus {
 }
 
 .card-dot {
-  color: #bbb;
+  color: #d7d7d7;
 }
 
 .card-date {
@@ -707,6 +707,17 @@ html {
 }
 
 @media (max-width: 600px) {
+
+  .card-destination {
+
+    display: -webkit-box;
+  
+    -webkit-line-clamp: 1;
+  
+    -webkit-box-orient: vertical;
+  
+    overflow: hidden;
+  }
 
   .summary-item {
     max-width: 90px;
