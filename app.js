@@ -303,7 +303,8 @@ async function loadShipments() {
 
 function renderShipments(items) {
 
-  const container = document.getElementById('shipments');
+  const container =
+    document.getElementById('shipments');
 
   container.innerHTML = '';
 
@@ -336,20 +337,96 @@ function renderShipments(items) {
 
     div.className = 'card';
 
-    div.style.animationDelay = `${index * 70}ms`;
+    div.style.animationDelay =
+      `${index * 70}ms`;
 
     div.innerHTML = `
-      <div class="card-title">
-        ${item.product}
+
+      <div class="card-header">
+
+        <div class="card-destination">
+          ${item.destination}
+        </div>
+
       </div>
 
-      <div><b>ID:</b> ${item.id}</div>
-      <div><b>Тип доставки:</b> ${item.method}</div>
-      <div><b>Куди:</b> ${item.destination}</div>
-      <div><b>Статус:</b> ${item.status}</div>
-      <div><b>Дата:</b> ${item.createdAt}</div>
-      <div><b>Коментар:</b> ${item.comment}</div>
+      <div class="card-main">
+
+        <div>
+          <b>Тип:</b> ${item.product}
+        </div>
+
+        <div>
+          <b>Дата:</b> ${item.createdAt}
+        </div>
+
+        <div>
+          <b>Тип доставки:</b> ${item.method}
+        </div>
+
+        <div>
+          <b>Відправник:</b> ${item.name}
+        </div>
+
+        <div>
+          <b>Статус:</b> ${item.status}
+        </div>
+
+      </div>
+
+      <div class="card-details-toggle">
+        Деталі ⌄
+      </div>
+
+      <div class="card-details">
+
+        <div>
+          <b>ID:</b> ${item.id}
+        </div>
+
+        <div>
+          <b>Email:</b> ${item.createdBy}
+        </div>
+
+        ${item.comment
+          ? `
+            <div>
+              <b>Коментар:</b> ${item.comment}
+            </div>
+          `
+          : ''
+        }
+
+      </div>
     `;
+
+    const toggle =
+      div.querySelector('.card-details-toggle');
+
+    const details =
+      div.querySelector('.card-details');
+
+    let opened = false;
+
+    toggle.addEventListener('click', () => {
+
+      opened = !opened;
+
+      if (opened) {
+
+        details.classList.add('details-open');
+
+        toggle.innerText =
+          'Сховати ⌃';
+
+      } else {
+
+        details.classList.remove('details-open');
+
+        toggle.innerText =
+          'Деталі ⌄';
+      }
+    });
 
     container.appendChild(div);
   });
