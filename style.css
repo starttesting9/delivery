@@ -246,7 +246,10 @@ textarea:focus {
 
   display: flex;
   flex-direction: column;
-  gap: 6px;
+
+  gap: 4px;
+
+  font-size: 14px;
 
   line-height: 1.45;
 
@@ -262,7 +265,7 @@ textarea:focus {
 
   opacity: 1;
 
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .login-screen {
