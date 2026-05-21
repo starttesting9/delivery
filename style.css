@@ -274,8 +274,6 @@ textarea:focus {
 
 .summary-item {
 
-  max-width: 110px;
-
   white-space: nowrap;
 
   overflow: hidden;
@@ -289,7 +287,9 @@ textarea:focus {
 
   align-items: center;
 
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+
+  overflow: hidden;
 
   gap: 6px;
 
@@ -707,6 +707,10 @@ html {
 }
 
 @media (max-width: 600px) {
+
+  .summary-item {
+    max-width: 90px;
+  }
 
   .card {
     line-height: 1.45;
