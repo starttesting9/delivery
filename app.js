@@ -258,6 +258,29 @@ function renderShipments(items) {
 
   container.innerHTML = '';
 
+  if (!items.length) {
+
+    container.innerHTML = `
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          ⊹
+        </div>
+
+        <div class="empty-title">
+          Список порожній
+        </div>
+
+        <div class="empty-text">
+          У вас ще немає доставок
+        </div>
+
+      </div>
+    `;
+
+    return;
+  }
+
   items.forEach((item, index) => {
 
     const div = document.createElement('div');
