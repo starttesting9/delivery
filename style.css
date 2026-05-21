@@ -70,10 +70,11 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-
+  font-size: 14px;
+  font-weight: 500;
   gap: 10px;
 
-  height: 54px;
+  height: 44px;
 
   background: white;
 
@@ -112,14 +113,13 @@ select {
 
   opacity: 0;
 
-  overflow: hidden;
+  padding:
+    0 20px;
 
-  padding-top: 0;
-  padding-bottom: 0;
-
+  margin-top: 0;
   margin-bottom: 0;
 
-  transform: translateY(-8px);
+  transform: translateY(-10px);
 
   pointer-events: none;
 }
@@ -130,16 +130,14 @@ select {
 
   opacity: 1;
 
+  padding: 20px;
+
+  margin-top: 12px;
+  margin-bottom: 20px;
+
   transform: translateY(0);
 
   pointer-events: auto;
-
-  transition:
-    max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.25s ease,
-    transform 0.35s ease,
-    padding 0.3s ease,
-    margin 0.3s ease;
 }
 
 button {
@@ -408,15 +406,17 @@ button {
 
 .form {
   background: white;
-  padding: 20px;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 20px;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: formAppear 0.4s ease forwards;
+  overflow: hidden;
+  transition:
+    max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s ease,
+    transform 0.35s ease,
+    padding 0.35s ease,
+    margin 0.35s ease;
 }
 
 #toast {
