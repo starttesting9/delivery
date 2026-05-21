@@ -352,26 +352,24 @@ function renderShipments(items) {
 
       <div class="card-main">
 
-        <div>
-          <b>Тип:</b> ${item.product}
+        <div class="card-summary">
+      
+          🚁 ${item.product}
+      
+          <span class="card-dot">•</span>
+      
+          ${item.method}
+      
+          <span class="card-dot">•</span>
+      
+          ${item.status}
+      
         </div>
-
-        <div>
-          <b>Дата:</b> ${item.createdAt}
+      
+        <div class="card-date">
+          ${item.createdAt}
         </div>
-
-        <div>
-          <b>Тип доставки:</b> ${item.method}
-        </div>
-
-        <div>
-          <b>Відправник:</b> ${item.name}
-        </div>
-
-        <div>
-          <b>Статус:</b> ${item.status}
-        </div>
-
+      
       </div>
 
       <div class="card-details-toggle">
@@ -381,13 +379,33 @@ function renderShipments(items) {
       <div class="card-details">
 
         <div>
+          <b>Тип:</b> ${item.product}
+        </div>
+      
+        <div>
+          <b>Дата:</b> ${item.createdAt}
+        </div>
+      
+        <div>
+          <b>Тип доставки:</b> ${item.method}
+        </div>
+      
+        <div>
+          <b>Відправник:</b> ${item.name}
+        </div>
+      
+        <div>
+          <b>Статус:</b> ${item.status}
+        </div>
+      
+        <div>
           <b>ID:</b> ${item.id}
         </div>
-
+      
         <div>
           <b>Email:</b> ${item.createdBy}
         </div>
-
+      
         ${item.comment
           ? `
             <div>
@@ -396,7 +414,7 @@ function renderShipments(items) {
           `
           : ''
         }
-
+      
       </div>
     `;
 
