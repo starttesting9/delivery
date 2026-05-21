@@ -146,6 +146,34 @@ textarea:focus {
   margin-bottom: 18px;
 }
 
+.empty-state {
+  background: white;
+  border-radius: 18px;
+  padding: 42px 24px;
+  text-align: center;
+  border: 1px solid #efefef;
+  animation:
+    cardAppear 0.5s ease forwards;
+}
+
+.empty-icon {
+  font-size: 28px;
+  color: #cfcfcf;
+  margin-bottom: 12px;
+}
+
+.empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #888;
+}
+
 .login-text {
   color: #666;
   margin-bottom: 30px;
