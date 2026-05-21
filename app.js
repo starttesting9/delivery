@@ -5,6 +5,44 @@ let currentUser = null;
 
 setCurrentDateTime();
 
+const toggleFormBtn =
+  document.getElementById('toggleFormBtn');
+
+const shipmentForm =
+  document.getElementById('shipmentForm');
+
+const toggleFormText =
+  document.getElementById('toggleFormText');
+
+const toggleFormIcon =
+  document.getElementById('toggleFormIcon');
+
+let formOpened = false;
+
+toggleFormBtn.addEventListener('click', () => {
+
+  formOpened = !formOpened;
+
+  if (formOpened) {
+
+    shipmentForm.classList.add('form-open');
+
+    toggleFormText.innerText =
+      'Закрити форму';
+
+    toggleFormIcon.innerText = '−';
+
+  } else {
+
+    shipmentForm.classList.remove('form-open');
+
+    toggleFormText.innerText =
+      'Створити доставку';
+
+    toggleFormIcon.innerText = '+';
+  }
+});
+
 function setCurrentDateTime() {
 
   const now = new Date();
@@ -216,6 +254,15 @@ async function createShipment() {
   createBtn.classList.remove('loading');
 
   await loadShipments();
+
+  shipmentForm.classList.remove('form-open');
+
+  toggleFormText.innerText =
+    'Створити доставку';
+  
+  toggleFormIcon.innerText = '+';
+  
+  formOpened = false;
 }
 
 async function loadShipments() {
