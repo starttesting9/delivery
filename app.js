@@ -367,11 +367,11 @@ function renderShipments(items) {
 
         <div class="card-summary">
       
-          🚁 ${truncateText(item.product, 10)}
+          🚁 ${truncateText(item.product, 7)}
       
           <span class="card-dot">•</span>
       
-          ${truncateText(item.method, 8)}
+          ${truncateText(item.method, 7)}
       
           <span class="card-dot">•</span>
       
