@@ -30,7 +30,8 @@ toggleFormBtn.addEventListener('click', () => {
     toggleFormText.innerText =
       'Закрити форму';
 
-    toggleFormIcon.innerText = '−';
+    toggleFormIcon.style.transform =
+      'rotate(45deg)';
 
   } else {
 
@@ -39,7 +40,8 @@ toggleFormBtn.addEventListener('click', () => {
     toggleFormText.innerText =
       'Створити доставку';
 
-    toggleFormIcon.innerText = '+';
+    toggleFormIcon.style.transform =
+      'rotate(0deg)';
   }
 });
 
