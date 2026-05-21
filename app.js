@@ -385,6 +385,10 @@ function renderShipments(items) {
       <div class="card-details">
 
         <div>
+          <b>Куди:</b> ${item.destination}
+        </div>
+
+        <div>
           <b>Тип:</b> ${item.product}
         </div>
       
