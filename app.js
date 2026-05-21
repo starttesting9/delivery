@@ -176,14 +176,14 @@ async function createShipment() {
   const comment = document.getElementById('comment').value.trim();
 
   if (!product) {
-    showToast('Вкажіть продукт');
+    showToast('Вкажіть тип забезпечення');
     return;
   }
 
   if (!validateLength(product, 2, 80)) {
 
     showToast(
-      'Продукт повинен містити від 2 до 80 символів'
+      'Тип забезпечення повинен містити від 2 до 80 символів'
     );
   
     return;
