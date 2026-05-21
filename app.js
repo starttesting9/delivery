@@ -238,6 +238,15 @@ async function loadShipments() {
 
   shipmentsLoader.classList.add('hidden');
 
+  if (result.error) {
+
+    shipments.style.opacity = '1';
+  
+    showToast(result.error);
+  
+    return;
+  }
+  
   renderShipments(result || []);
 
   shipments.style.opacity = '1';
