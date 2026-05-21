@@ -147,11 +147,11 @@ textarea:focus {
 }
 
 .empty-state {
-  background: white;
+  background: rgba(255,255,255,0.72);
   border-radius: 18px;
   padding: 42px 24px;
   text-align: center;
-  border: 1px solid #efefef;
+  border: 1px dashed #ececec;
   animation:
     cardAppear 0.5s ease forwards;
 }
