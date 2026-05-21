@@ -301,6 +301,25 @@ async function loadShipments() {
   shipments.style.opacity = '1';
 }
 
+function getStatusClass(status) {
+
+  switch (status) {
+
+    case 'Виконано':
+      return 'status-success';
+
+    case 'В процесі':
+      return 'status-warning';
+
+    case 'Не виконано':
+    case 'Втрачено/знищено':
+      return 'status-danger';
+
+    default:
+      return '';
+  }
+}
+
 function renderShipments(items) {
 
   const container =
@@ -366,7 +385,7 @@ function renderShipments(items) {
       
           <span class="card-dot">•</span>
       
-          <div class="summary-item">
+          <div class="summary-item ${getStatusClass(item.status)}">
             ${item.status}
           </div>
       
@@ -405,7 +424,11 @@ function renderShipments(items) {
         </div>
       
         <div>
-          <b>Статус:</b> ${item.status}
+          <b>Статус:</b>
+        
+          <span class="${getStatusClass(item.status)}">
+            ${item.status}
+          </span>
         </div>
       
         <div>
