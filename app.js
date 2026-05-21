@@ -301,19 +301,6 @@ async function loadShipments() {
   shipments.style.opacity = '1';
 }
 
-function truncateText(text, maxLength) {
-
-  if (!text) {
-    return '';
-  }
-
-  if (text.length <= maxLength) {
-    return text;
-  }
-
-  return text.slice(0, maxLength) + '...';
-}
-
 function renderShipments(items) {
 
   const container =
@@ -365,18 +352,20 @@ function renderShipments(items) {
 
       <div class="card-main">
 
-        <div class="card-summary">
-      
-          🚁 ${truncateText(item.product, 7)}
-      
-          <span class="card-dot">•</span>
-      
-          ${truncateText(item.method, 7)}
-      
-          <span class="card-dot">•</span>
-      
+        <div class="summary-item">
+          🚁 ${item.product}
+        </div>
+        
+        <span class="card-dot">•</span>
+        
+        <div class="summary-item">
+          ${item.method}
+        </div>
+        
+        <span class="card-dot">•</span>
+        
+        <div class="summary-item">
           ${item.status}
-      
         </div>
       
         <div class="card-date">
