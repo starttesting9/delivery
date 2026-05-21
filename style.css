@@ -272,6 +272,17 @@ textarea:focus {
   margin-top: 10px;
 }
 
+.summary-item {
+
+  max-width: 90px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
 .card-summary {
 
   display: flex;
