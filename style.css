@@ -42,6 +42,18 @@ select {
     12px 40px 12px 10px;
 }
 
+.status-success {
+  color: #4f8a5b;
+}
+
+.status-warning {
+  color: #b58b3a;
+}
+
+.status-danger {
+  color: #b85c5c;
+}
+
 .select-wrap {
   position: relative;
   width: 100%;
