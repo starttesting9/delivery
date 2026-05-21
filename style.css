@@ -73,7 +73,7 @@ select {
   font-size: 14px;
   font-weight: 500;
   gap: 10px;
-
+  color: #444;
   height: 44px;
 
   background: white;
@@ -99,12 +99,12 @@ select {
 }
 
 #toggleFormIcon {
-
-  font-size: 20px;
-
+  font-size: 16px;
   line-height: 1;
-
-  color: #666;
+  color: #888;
+  transition:
+    transform 0.3s ease,
+    color 0.2s ease;
 }
 
 .hidden-form {
@@ -132,7 +132,7 @@ select {
 
   padding: 20px;
 
-  margin-top: 12px;
+  margin-top: 8px;
   margin-bottom: 20px;
 
   transform: translateY(0);
@@ -405,6 +405,10 @@ button {
 }
 
 .form {
+  will-change:
+    max-height,
+    opacity,
+    transform;
   background: white;
   border-radius: 16px;
   display: flex;
