@@ -193,6 +193,79 @@ textarea:focus {
   margin-bottom: 10px;
 }
 
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 14px;
+}
+
+.card-destination {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  line-height: 1.45;
+}
+
+.card-details-toggle {
+
+  margin-top: 16px;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  color: #777;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  transition: 0.2s;
+}
+
+.card-details-toggle:hover {
+  color: #111;
+}
+
+.card-details {
+
+  max-height: 0;
+
+  overflow: hidden;
+
+  opacity: 0;
+
+  margin-top: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  line-height: 1.45;
+
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    margin-top 0.25s ease;
+}
+
+.card-details.details-open {
+
+  max-height: 300px;
+
+  opacity: 1;
+
+  margin-top: 14px;
+}
+
 .login-screen {
   min-height: 100vh;
   display: flex;
