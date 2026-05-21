@@ -272,7 +272,7 @@ function renderShipments(items) {
         </div>
 
         <div class="empty-text">
-          У вас ще немає доставок
+          У вас ще немає відправок
         </div>
 
       </div>
