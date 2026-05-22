@@ -157,7 +157,9 @@ async function api(
 
   if (result.error === 'AUTH_REQUIRED') {
 
-    showLoginScreen();
+    document
+      .getElementById('sessionExpired')
+      .classList.remove('hidden');
   
     throw new Error('AUTH_REQUIRED');
   }
