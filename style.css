@@ -850,6 +850,20 @@ html {
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
+  animation:
+    sessionPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes sessionPulse {
+
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 #reloadWarningBtn {
