@@ -56,7 +56,7 @@ function startSessionTimer() {
       .getElementById('sessionWarning')
       .classList.remove('hidden');
 
-  }, 3 * 60 * 1000);
+  }, 50 * 60 * 1000);
 
   setTimeout(() => {
 
@@ -64,7 +64,7 @@ function startSessionTimer() {
       .getElementById('sessionExpired')
       .classList.remove('hidden');
 
-  }, 6 * 60 * 1000);
+  }, 55 * 60 * 1000);
 }
 
 function setCurrentDateTime() {
