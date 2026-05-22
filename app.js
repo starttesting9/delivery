@@ -2,6 +2,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbz7tPrVsKyZ85-ga8iplEC7
 
 let authToken = null;
 let currentUser = null;
+let sessionTimer = null;
 
 setCurrentDateTime();
 
@@ -44,6 +45,19 @@ toggleFormBtn.addEventListener('click', () => {
       'rotate(0deg)';
   }
 });
+
+function startSessionTimer() {
+
+  clearTimeout(sessionTimer);
+
+  sessionTimer = setTimeout(() => {
+
+    document
+      .getElementById('sessionExpired')
+      .classList.remove('hidden');
+
+  }, 5 * 60 * 1000);
+}
 
 function setCurrentDateTime() {
 
@@ -103,6 +117,8 @@ async function handleCredentialResponse(response) {
   }
 
   currentUser = result.user;
+
+  startSessionTimer();
 
   document.getElementById('userInfo')
     .innerText = currentUser.name;
@@ -555,3 +571,10 @@ scrollTopBtn.addEventListener('click', () => {
   });
 
 });
+
+document
+  .getElementById('reloadSessionBtn')
+  .addEventListener('click', () => {
+
+    location.reload();
+  });
