@@ -115,6 +115,8 @@ async function silentRefreshAuth() {
 
       client_id: getClientId(),
 
+      auto_select: true,
+
       callback: (response) => {
 
         if (!response.credential) {
