@@ -452,7 +452,7 @@ textarea:focus {
 
 #userInfo {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   letter-spacing: -1px;
   line-height: 1;
@@ -476,7 +476,7 @@ textarea:focus {
   border: none;
   background: transparent;
 
-  color: #888;
+  color: #716e6e;
 
   padding: 0;
 
