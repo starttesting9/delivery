@@ -45,13 +45,6 @@ toggleFormBtn.addEventListener('click', () => {
   }
 });
 
-function getClientId() {
-
-  return document
-    .getElementById('g_id_onload')
-    .dataset.client_id;
-}
-
 function setCurrentDateTime() {
 
   const now = new Date();
@@ -80,7 +73,23 @@ async function handleCredentialResponse(response) {
   document.getElementById('loader')
     .classList.remove('hidden');
 
-  const result = await api('auth');
+  let result;
+
+  try {
+  
+    result = await api('auth');
+  
+  } catch (e) {
+  
+    console.error(e);
+  
+    document.getElementById('loader')
+      .classList.add('hidden');
+  
+    showLoginScreen();
+  
+    return;
+  }
 
   if (result.error) {
 
@@ -107,53 +116,9 @@ async function handleCredentialResponse(response) {
     .classList.remove('hidden');
 }
 
-async function silentRefreshAuth() {
-
-  return new Promise((resolve, reject) => {
-
-    google.accounts.id.initialize({
-
-      client_id: getClientId(),
-
-      auto_select: true,
-
-      callback: (response) => {
-
-        if (!response.credential) {
-
-          reject(
-            new Error('Silent auth failed')
-          );
-
-          return;
-        }
-
-        authToken = response.credential;
-
-        resolve();
-      }
-    });
-
-    google.accounts.id.prompt((notification) => {
-
-      if (
-        notification.isNotDisplayed() ||
-        notification.isSkippedMoment()
-      ) {
-
-        reject(
-          new Error('Google session expired')
-        );
-      }
-    });
-
-  });
-}
-
 async function api(
   action,
-  data = {},
-  retry = true
+  data = {}
 ) {
 
   const formData = new URLSearchParams();
@@ -174,27 +139,11 @@ async function api(
 
   const result = await response.json();
 
-  if (
-    result.error === 'AUTH_REQUIRED' &&
-    retry
-  ) {
+  if (result.error === 'AUTH_REQUIRED') {
 
-    try {
-
-      await silentRefreshAuth();
-
-      return api(
-        action,
-        data,
-        false
-      );
-
-    } catch (e) {
-
-      showLoginScreen();
-
-      throw new Error('AUTH_REQUIRED');
-    }
+    showLoginScreen();
+  
+    throw new Error('AUTH_REQUIRED');
   }
 
   return result;
