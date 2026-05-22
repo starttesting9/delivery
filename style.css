@@ -813,6 +813,104 @@ html {
   transform: translateY(-1px);
 }
 
+.session-warning {
+
+  position: fixed;
+
+  left: 50%;
+  bottom: 24px;
+
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 16px;
+
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.82);
+
+  backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255,255,255,0.7);
+
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.08);
+
+  z-index: 9999;
+
+  animation:
+    cardAppear 0.35s ease forwards;
+}
+
+.session-warning-text {
+
+  font-size: 13px;
+  font-weight: 500;
+
+  color: #444;
+
+  white-space: nowrap;
+}
+
+#reloadWarningBtn {
+
+  height: 36px;
+
+  padding: 0 14px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #111;
+
+  color: white;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+
+#reloadWarningBtn:hover {
+
+  opacity: 0.92;
+
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+
+  .session-warning {
+
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+
+    transform: none;
+
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .session-warning-text {
+
+    text-align: center;
+
+    white-space: normal;
+  }
+
+  #reloadWarningBtn {
+    width: 100%;
+  }
+}
+
 @media (max-width: 600px) {
 
   .card-destination {
