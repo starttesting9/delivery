@@ -45,6 +45,13 @@ toggleFormBtn.addEventListener('click', () => {
   }
 });
 
+function getClientId() {
+
+  return document
+    .getElementById('g_id_onload')
+    .dataset.client_id;
+}
+
 function setCurrentDateTime() {
 
   const now = new Date();
@@ -100,27 +107,52 @@ async function handleCredentialResponse(response) {
     .classList.remove('hidden');
 }
 
-function parseJwt(token) {
+async function silentRefreshAuth() {
 
-  const base64Url = token.split('.')[1];
+  return new Promise((resolve, reject) => {
 
-  const base64 = base64Url
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
+    google.accounts.id.initialize({
 
-  return JSON.parse(
-    decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c =>
-          '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-        )
-        .join('')
-    )
-  );
+      client_id: getClientId(),
+
+      callback: (response) => {
+
+        if (!response.credential) {
+
+          reject(
+            new Error('Silent auth failed')
+          );
+
+          return;
+        }
+
+        authToken = response.credential;
+
+        resolve();
+      }
+    });
+
+    google.accounts.id.prompt((notification) => {
+
+      if (
+        notification.isNotDisplayed() ||
+        notification.isSkippedMoment()
+      ) {
+
+        reject(
+          new Error('Google session expired')
+        );
+      }
+    });
+
+  });
 }
 
-async function api(action, data = {}) {
+async function api(
+  action,
+  data = {},
+  retry = true
+) {
 
   const formData = new URLSearchParams();
 
@@ -138,10 +170,50 @@ async function api(action, data = {}) {
     body: formData
   });
 
-  return response.json();
+  const result = await response.json();
+
+  if (
+    result.error === 'AUTH_REQUIRED' &&
+    retry
+  ) {
+
+    try {
+
+      await silentRefreshAuth();
+
+      return api(
+        action,
+        data,
+        false
+      );
+
+    } catch (e) {
+
+      showLoginScreen();
+
+      throw new Error('AUTH_REQUIRED');
+    }
+  }
+
+  return result;
 }
 
 let toastTimeout = null;
+
+function showLoginScreen() {
+
+  document.getElementById('app')
+    .classList.add('hidden');
+
+  document.getElementById('loader')
+    .classList.add('hidden');
+
+  document.getElementById('deniedScreen')
+    .classList.add('hidden');
+
+  document.getElementById('loginBlock')
+    .classList.remove('hidden');
+}
 
 function showToast(message) {
 
@@ -231,17 +303,20 @@ async function createShipment() {
 
   createBtn.classList.add('loading');
 
-  const result = await api('createShipment', {
+  try {
 
-    name: currentUser.name,
-
-    createdAt,
-    product,
-    method,
-    destination,
-    status,
-    comment
-  });
+  const result = await api(
+    'createShipment',
+    {
+      name: currentUser.name,
+      createdAt,
+      product,
+      method,
+      destination,
+      status,
+      comment
+    }
+  );
 
   console.log(result);
 
@@ -252,8 +327,6 @@ async function createShipment() {
   document.getElementById('comment').value = '';
 
   setCurrentDateTime();
-  
-  createBtn.classList.remove('loading');
 
   await loadShipments();
 
@@ -261,11 +334,22 @@ async function createShipment() {
 
   toggleFormText.innerText =
     'Створити доставку';
-  
-  toggleFormIcon.innerText = '+';
-  
+
+  toggleFormIcon.style.transform =
+    'rotate(0deg)';
+
   formOpened = false;
+
+} catch (e) {
+
+  console.error(e);
 }
+finally {
+
+  createBtn.classList.remove('loading');
+}
+
+}  
 
 async function loadShipments() {
 
