@@ -818,7 +818,7 @@ html {
   position: fixed;
 
   left: 50%;
-  bottom: 24px;
+  bottom: 32px;
 
   transform: translateX(-50%);
 
@@ -830,14 +830,14 @@ html {
 
   border-radius: 18px;
 
-  background: rgba(255,255,255,0.82);
+  background: rgba(255,255,255,0.92);
 
   backdrop-filter: blur(12px);
 
-  border: 1px solid rgba(255,255,255,0.7);
+  border: 1px solid #ece3c7;
 
   box-shadow:
-    0 8px 32px rgba(0,0,0,0.08);
+    0 12px 40px rgba(0,0,0,0.12);
 
   z-index: 9999;
 
@@ -890,7 +890,7 @@ html {
 
     left: 16px;
     right: 16px;
-    bottom: 16px;
+    bottom: 20px;
 
     transform: none;
 
