@@ -564,7 +564,7 @@ button {
   position: fixed;
 
   left: 50%;
-  bottom: 24px;
+  bottom: 110px;
 
   transform:
     translateX(-50%)
@@ -847,6 +847,7 @@ html {
 
 .session-warning-text {
 
+  color: #b85c5c;
   font-size: 13px;
   font-weight: 500;
 
