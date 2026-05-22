@@ -53,10 +53,18 @@ function startSessionTimer() {
   sessionTimer = setTimeout(() => {
 
     document
+      .getElementById('sessionWarning')
+      .classList.remove('hidden');
+
+  }, 3 * 60 * 1000);
+
+  setTimeout(() => {
+
+    document
       .getElementById('sessionExpired')
       .classList.remove('hidden');
 
-  }, 5 * 60 * 1000);
+  }, 6 * 60 * 1000);
 }
 
 function setCurrentDateTime() {
@@ -576,6 +584,13 @@ scrollTopBtn.addEventListener('click', () => {
 
 document
   .getElementById('reloadSessionBtn')
+  .addEventListener('click', () => {
+
+    location.reload();
+  });
+
+document
+  .getElementById('reloadWarningBtn')
   .addEventListener('click', () => {
 
     location.reload();
