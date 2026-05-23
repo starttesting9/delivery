@@ -330,7 +330,7 @@ textarea:focus {
 }
 
 .login-screen {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -397,7 +397,7 @@ textarea:focus {
 }
 
 #loader {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -513,7 +513,7 @@ button {
 }
 
 #deniedScreen {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -923,6 +923,12 @@ html {
 }
 
 @media (max-width: 600px) {
+
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
 
   .card-destination {
 
