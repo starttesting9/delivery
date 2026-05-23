@@ -295,6 +295,15 @@ async function createShipment() {
     }
   );
 
+  if (result.error) {
+  
+    showToast(result.error);
+  
+    createBtn.classList.remove('loading');
+  
+    return;
+  }
+
   console.log(result);
 
   document.getElementById('product').value = '';
@@ -304,8 +313,6 @@ async function createShipment() {
   document.getElementById('comment').value = '';
 
   setCurrentDateTime();
-
-  await loadShipments();
 
   shipmentForm.classList.remove('form-open');
 
@@ -317,13 +324,13 @@ async function createShipment() {
 
   formOpened = false;
 
+  createBtn.classList.remove('loading');
+
+  await loadShipments();
+
 } catch (e) {
 
   console.error(e);
-}
-finally {
-
-  createBtn.classList.remove('loading');
 }
 
 }  
