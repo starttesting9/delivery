@@ -564,7 +564,7 @@ button {
   position: fixed;
 
   left: 50%;
-  bottom: 130px;
+  bottom: 120px;
 
   transform:
     translateX(-50%)
