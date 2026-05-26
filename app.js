@@ -113,7 +113,7 @@ async function handleCredentialResponse(response) {
     return;
   }
 
-  if (result.error) {
+  if (!result.success) { {
 
     document.getElementById('loader')
       .classList.add('hidden');
@@ -124,7 +124,7 @@ async function handleCredentialResponse(response) {
     return;
   }
 
-  currentUser = result.user;
+  currentUser = result.data.user;
 
   startSessionTimer();
 
@@ -163,7 +163,10 @@ async function api(
 
   const result = await response.json();
 
-  if (result.error === 'AUTH_REQUIRED') {
+  if (
+    !result.success &&
+    result.error === 'AUTH_REQUIRED'
+  ) {
 
     document
       .getElementById('sessionExpired')
@@ -238,11 +241,6 @@ async function createShipment() {
     return;
   }
 
-  if (!createdAt) {
-    showToast('Вкажіть дату');
-    return;
-  }
-
   if (!method) {
     showToast('Вкажіть тип доставки');
     return;
@@ -286,7 +284,6 @@ async function createShipment() {
     'createShipment',
     {
       name: currentUser.name,
-      createdAt,
       product,
       method,
       destination,
@@ -295,8 +292,7 @@ async function createShipment() {
     }
   );
 
-  if (result.error) {
-  
+  if (!result.success) {
     showToast(result.error);
   
     createBtn.classList.remove('loading');
@@ -355,7 +351,7 @@ async function loadShipments() {
 
   shipmentsLoader.classList.add('hidden');
 
-  if (result.error) {
+  if (!result.success) {
 
     shipments.style.opacity = '1';
   
@@ -364,7 +360,7 @@ async function loadShipments() {
     return;
   }
   
-  renderShipments(result || []);
+  renderShipments(result.data || []);
 
   shipments.style.opacity = '1';
 }
