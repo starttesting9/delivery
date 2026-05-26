@@ -98,22 +98,19 @@ async function handleCredentialResponse(response) {
   let result;
 
   try {
-  
     result = await api('auth');
-  
   } catch (e) {
-  
     console.error(e);
-  
+
     document.getElementById('loader')
       .classList.add('hidden');
-  
+
     showLoginScreen();
-  
+
     return;
   }
 
-  if (!result.success) { {
+  if (!result.success) {
 
     document.getElementById('loader')
       .classList.add('hidden');
@@ -220,7 +217,6 @@ function validateLength(value, min, max) {
 
 async function createShipment() {
 
-  const createdAt = document.getElementById('createdAt').value;
   const product = document.getElementById('product').value.trim();
   const method = document.getElementById('method').value.trim();
   const destination = document.getElementById('destination').value.trim();
@@ -233,11 +229,10 @@ async function createShipment() {
   }
 
   if (!validateLength(product, 2, 80)) {
-
     showToast(
       'Тип забезпечення повинен містити від 2 до 80 символів'
     );
-  
+
     return;
   }
 
@@ -247,11 +242,10 @@ async function createShipment() {
   }
 
   if (!validateLength(method, 2, 40)) {
-
     showToast(
       'Тип доставки повинен містити від 2 до 40 символів'
     );
-  
+
     return;
   }
 
@@ -261,11 +255,10 @@ async function createShipment() {
   }
 
   if (!validateLength(destination, 2, 180)) {
-
     showToast(
       'Поле "Куди" повинно містити від 2 до 180 символів'
     );
-  
+
     return;
   }
 
@@ -279,57 +272,52 @@ async function createShipment() {
   createBtn.classList.add('loading');
 
   try {
+    const result = await api(
+      'createShipment',
+      {
+        name: currentUser.name,
+        product,
+        method,
+        destination,
+        status,
+        comment
+      }
+    );
 
-  const result = await api(
-    'createShipment',
-    {
-      name: currentUser.name,
-      product,
-      method,
-      destination,
-      status,
-      comment
+    if (!result.success) {
+      showToast(result.error);
+      return;
     }
-  );
 
-  if (!result.success) {
-    showToast(result.error);
-  
+    document.getElementById('product').value = '';
+    document.getElementById('method').value = '';
+    document.getElementById('destination').value = '';
+    document.getElementById('status').value = '';
+    document.getElementById('comment').value = '';
+
+    setCurrentDateTime();
+
+    shipmentForm.classList.remove('form-open');
+
+    toggleFormText.innerText =
+      'Створити доставку';
+
+    toggleFormIcon.style.transform =
+      'rotate(0deg)';
+
+    formOpened = false;
+
+    await loadShipments();
+
+  } catch (e) {
+    console.error(e);
+
+    showToast('Помилка створення доставки');
+
+  } finally {
     createBtn.classList.remove('loading');
-  
-    return;
   }
-
-  console.log(result);
-
-  document.getElementById('product').value = '';
-  document.getElementById('method').value = '';
-  document.getElementById('destination').value = '';
-  document.getElementById('status').value = '';
-  document.getElementById('comment').value = '';
-
-  setCurrentDateTime();
-
-  shipmentForm.classList.remove('form-open');
-
-  toggleFormText.innerText =
-    'Створити доставку';
-
-  toggleFormIcon.style.transform =
-    'rotate(0deg)';
-
-  formOpened = false;
-
-  createBtn.classList.remove('loading');
-
-  await loadShipments();
-
-} catch (e) {
-
-  console.error(e);
 }
-
-}  
 
 async function loadShipments() {
 
