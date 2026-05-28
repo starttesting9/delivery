@@ -37,7 +37,7 @@ toggleFormBtn.addEventListener('click', () => {
     shipmentForm.classList.remove('form-open');
 
     toggleFormText.innerText =
-      'Створити доставку';
+      'Створити заявку';
 
     toggleFormIcon.style.transform =
       'rotate(0deg)';
@@ -199,7 +199,6 @@ async function createShipment() {
 
   const product = document.getElementById('product').value.trim();
   const priority = document.getElementById('priority').value;
-  const method = document.getElementById('method').value.trim();
   const unit = document.getElementById('unit').value.trim();
   const destination = document.getElementById('destination').value.trim();
   const comment = document.getElementById('comment').value.trim();
@@ -219,19 +218,6 @@ async function createShipment() {
 
   if (!priority) {
     showToast('Вкажіть пріоритет');
-    return;
-  }
-
-  if (!method) {
-    showToast('Вкажіть тип БПЛА');
-    return;
-  }
-
-  if (!validateLength(method, 2, 40)) {
-    showToast(
-      'Тип БПЛА повинен містити від 2 до 40 символів'
-    );
-
     return;
   }
 
@@ -272,7 +258,6 @@ async function createShipment() {
         name: currentUser.name,
         product,
         priority,
-        method,
         unit,
         destination,
         comment
@@ -286,7 +271,6 @@ async function createShipment() {
 
     document.getElementById('product').value = '';
     document.getElementById('priority').value = '';
-    document.getElementById('method').value = '';
     document.getElementById('unit').value = '';
     document.getElementById('destination').value = '';
     document.getElementById('comment').value = '';
@@ -294,7 +278,7 @@ async function createShipment() {
     shipmentForm.classList.remove('form-open');
 
     toggleFormText.innerText =
-      'Створити доставку';
+      'Створити заявку';
 
     toggleFormIcon.style.transform =
       'rotate(0deg)';
@@ -427,7 +411,7 @@ function renderShipments(items) {
           <span class="card-dot">•</span>
       
           <div class="summary-item">
-            ${item.method}
+            ${item.method || 'Не вказано'}
           </div>
       
           <span class="card-dot">•</span>
@@ -467,7 +451,7 @@ function renderShipments(items) {
         </div>
       
         <div>
-          <b>Тип БПЛА:</b> ${item.method}
+          <b>Тип БПЛА:</b> ${item.method || 'Не вказано'}
         </div>
 
         <div>
@@ -479,7 +463,7 @@ function renderShipments(items) {
         </div>
       
         <div>
-          <b>Відправник:</b> ${item.name}
+          <b>Створив заявку:</b> ${item.name}
         </div>
       
         <div>
@@ -492,10 +476,6 @@ function renderShipments(items) {
       
         <div>
           <b>ID:</b> ${item.id}
-        </div>
-      
-        <div>
-          <b>Email:</b> ${item.createdBy}
         </div>
       
         ${item.comment
