@@ -195,16 +195,12 @@ function validateLength(value, min, max) {
          value.length <= max;
 }
 
-function validateDateTime(value) {
-
-  return !isNaN(new Date(value).getTime());
-}
-
 async function createShipment() {
 
   const product = document.getElementById('product').value.trim();
+  const priority = document.getElementById('priority').value;
   const method = document.getElementById('method').value.trim();
-  const sentAt = document.getElementById('sentAt').value.trim();
+  const unit = document.getElementById('unit').value.trim();
   const destination = document.getElementById('destination').value.trim();
   const comment = document.getElementById('comment').value.trim();
 
@@ -221,6 +217,11 @@ async function createShipment() {
     return;
   }
 
+  if (!priority) {
+    showToast('Вкажіть пріоритет');
+    return;
+  }
+
   if (!method) {
     showToast('Вкажіть тип БПЛА');
     return;
@@ -234,22 +235,16 @@ async function createShipment() {
     return;
   }
 
-  if (
-    sentAt &&
-    !validateLength(sentAt, 2, 40)
-  ) {
-    showToast(
-      'Дата відправки повинна містити від 2 до 40 символів'
-    );
-
+  if (!unit) {
+    showToast('Вкажіть підрозділ');
     return;
   }
 
-  if (
-    sentAt &&
-    !validateDateTime(sentAt)
-  ) {
-    showToast('Вкажіть коректну дату відправки');
+  if (!validateLength(unit, 2, 30)) {
+    showToast(
+      'Підрозділ повинен містити від 2 до 30 символів'
+    );
+
     return;
   }
 
@@ -276,8 +271,9 @@ async function createShipment() {
       {
         name: currentUser.name,
         product,
+        priority,
         method,
-        sentAt,
+        unit,
         destination,
         comment
       }
@@ -289,8 +285,9 @@ async function createShipment() {
     }
 
     document.getElementById('product').value = '';
+    document.getElementById('priority').value = '';
     document.getElementById('method').value = '';
-    document.getElementById('sentAt').value = '';
+    document.getElementById('unit').value = '';
     document.getElementById('destination').value = '';
     document.getElementById('comment').value = '';
 
@@ -460,6 +457,10 @@ function renderShipments(items) {
         <div>
           <b>Тип:</b> ${item.product}
         </div>
+
+        <div>
+          <b>Підрозділ:</b> ${item.unit || 'Не вказано'}
+        </div>
       
         <div>
           <b>Дата створення заявки:</b> ${item.createdAt}
@@ -471,6 +472,10 @@ function renderShipments(items) {
 
         <div>
           <b>Дата відправки:</b> ${item.sentAt || 'Не вказано'}
+        </div>
+
+        <div>
+          <b>Екіпаж:</b> ${item.crew || 'Не вказано'}
         </div>
       
         <div>
