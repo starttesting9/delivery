@@ -4,8 +4,6 @@ let authToken = null;
 let currentUser = null;
 let sessionTimer = null;
 
-setCurrentDateTime();
-
 const toggleFormBtn =
   document.getElementById('toggleFormBtn');
 
@@ -65,24 +63,6 @@ function startSessionTimer() {
       .classList.remove('hidden');
 
   }, 55 * 60 * 1000);
-}
-
-function setCurrentDateTime() {
-
-  const now = new Date();
-
-  now.setMinutes(
-    now.getMinutes() - now.getTimezoneOffset()
-  );
-
-  const formatted =
-    now.toISOString().slice(0, 16);
-
-  document.getElementById('createdAt').value =
-    formatted;
-
-  document.getElementById('createdAt').max =
-    formatted;
 }
 
 async function handleCredentialResponse(response) {
@@ -215,12 +195,17 @@ function validateLength(value, min, max) {
          value.length <= max;
 }
 
+function validateDateTime(value) {
+
+  return !isNaN(new Date(value).getTime());
+}
+
 async function createShipment() {
 
   const product = document.getElementById('product').value.trim();
   const method = document.getElementById('method').value.trim();
+  const sentAt = document.getElementById('sentAt').value.trim();
   const destination = document.getElementById('destination').value.trim();
-  const status = document.getElementById('status').value;
   const comment = document.getElementById('comment').value.trim();
 
   if (!product) {
@@ -249,6 +234,25 @@ async function createShipment() {
     return;
   }
 
+  if (
+    sentAt &&
+    !validateLength(sentAt, 2, 40)
+  ) {
+    showToast(
+      'Дата відправки повинна містити від 2 до 40 символів'
+    );
+
+    return;
+  }
+
+  if (
+    sentAt &&
+    !validateDateTime(sentAt)
+  ) {
+    showToast('Вкажіть коректну дату відправки');
+    return;
+  }
+
   if (!destination) {
     showToast('Вкажіть куди');
     return;
@@ -259,11 +263,6 @@ async function createShipment() {
       'Поле "Куди" повинно містити від 2 до 180 символів'
     );
 
-    return;
-  }
-
-  if (!status) {
-    showToast('Вкажіть статус');
     return;
   }
 
@@ -278,8 +277,8 @@ async function createShipment() {
         name: currentUser.name,
         product,
         method,
+        sentAt,
         destination,
-        status,
         comment
       }
     );
@@ -291,11 +290,9 @@ async function createShipment() {
 
     document.getElementById('product').value = '';
     document.getElementById('method').value = '';
+    document.getElementById('sentAt').value = '';
     document.getElementById('destination').value = '';
-    document.getElementById('status').value = '';
     document.getElementById('comment').value = '';
-
-    setCurrentDateTime();
 
     shipmentForm.classList.remove('form-open');
 
@@ -361,6 +358,7 @@ function getStatusClass(status) {
       return 'status-success';
 
     case 'В процесі':
+    case 'Нова доставка':
       return 'status-warning';
 
     case 'Не виконано':
@@ -464,11 +462,15 @@ function renderShipments(items) {
         </div>
       
         <div>
-          <b>Дата:</b> ${item.createdAt}
+          <b>Дата створення заявки:</b> ${item.createdAt}
         </div>
       
         <div>
           <b>Тип БПЛА:</b> ${item.method}
+        </div>
+
+        <div>
+          <b>Дата відправки:</b> ${item.sentAt || 'Не вказано'}
         </div>
       
         <div>
