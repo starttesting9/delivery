@@ -237,13 +237,13 @@ async function createShipment() {
   }
 
   if (!method) {
-    showToast('Вкажіть тип доставки');
+    showToast('Вкажіть тип БПЛА');
     return;
   }
 
   if (!validateLength(method, 2, 40)) {
     showToast(
-      'Тип доставки повинен містити від 2 до 40 символів'
+      'Тип БПЛА повинен містити від 2 до 40 символів'
     );
 
     return;
@@ -468,7 +468,7 @@ function renderShipments(items) {
         </div>
       
         <div>
-          <b>Тип доставки:</b> ${item.method}
+          <b>Тип БПЛА:</b> ${item.method}
         </div>
       
         <div>
