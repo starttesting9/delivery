@@ -96,20 +96,40 @@
           placeholder="Тип забезпечення"
         >
 
+        <div class="select-wrap">
+
+          <select id="priority">
+        
+            <option value="" disabled selected>
+              Оберіть пріоритет
+            </option>
+
+            <option value="Низький">
+              Низький
+            </option>
+        
+            <option value="Середній">
+              Середній
+            </option>
+
+            <option value="Високий">
+              Високий
+            </option>
+        
+          </select>
+        
+        </div>
+
         <input
           type="text"
           id="method"
           placeholder="Тип БПЛА"
         >
 
-        <label class="field-label" for="sentAt">
-          Дата відправки
-        </label>
-
         <input
-          type="datetime-local"
-          id="sentAt"
-          aria-label="Дата відправки"
+          type="text"
+          id="unit"
+          placeholder="Підрозділ"
         >
 
         <input
