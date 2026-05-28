@@ -200,6 +200,13 @@ textarea:focus {
     0 0 0 4px rgba(0,0,0,0.03);
 }
 
+.field-label {
+  color: #666;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: -4px;
+}
+
 .card-title {
   font-weight: bold;
   margin-bottom: 10px;
