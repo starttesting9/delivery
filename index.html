@@ -97,14 +97,19 @@
         >
 
         <input
-          type="datetime-local"
-          id="createdAt"
-        >
-
-        <input
           type="text"
           id="method"
           placeholder="Тип БПЛА"
+        >
+
+        <label class="field-label" for="sentAt">
+          Дата відправки
+        </label>
+
+        <input
+          type="datetime-local"
+          id="sentAt"
+          aria-label="Дата відправки"
         >
 
         <input
@@ -112,34 +117,6 @@
           id="destination"
           placeholder="Куди"
         >
-
-        <div class="select-wrap">
-
-          <select id="status">
-        
-            <option value="" disabled selected>
-              Оберіть статус
-            </option>
-
-            <option value="В процесі">
-              В процесі
-            </option>
-        
-            <option value="Виконано">
-              Виконано
-            </option>
-
-            <option value="Не виконано">
-              Не виконано
-            </option>
-        
-            <option value="Втрачено/знищено">
-              Втрачено/знищено
-            </option>
-        
-          </select>
-        
-        </div>
 
         <textarea
           id="comment"
