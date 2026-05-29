@@ -222,7 +222,7 @@ function showToast(message, type = 'error') {
 
     toast.classList.remove('show');
 
-  }, 2500);
+  }, 4000);
 }
 
 function getShipmentsVersion(items) {
