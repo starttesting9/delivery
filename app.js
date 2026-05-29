@@ -3,7 +3,6 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbz7tPrVsKyZ85-ga8iplEC7
 let authToken = null;
 let currentUser = null;
 let sessionTimer = null;
-let refreshTimer = null;
 let editingShipmentId = null;
 
 const SHIPMENT_PRIORITIES = [
@@ -121,7 +120,6 @@ async function handleCredentialResponse(response) {
   currentUser = result.data.user;
 
   startSessionTimer();
-  startAutoRefresh();
 
   document.getElementById('userInfo')
     .innerText = currentUser.name;
@@ -372,58 +370,31 @@ async function createShipment() {
   }
 }
 
-function startAutoRefresh() {
-
-  clearInterval(refreshTimer);
-
-  refreshTimer = setInterval(() => {
-
-    if (editingShipmentId) {
-      return;
-    }
-
-    loadShipments(true);
-
-  }, 45000);
-}
-
-async function loadShipments(silent = false) {
+async function loadShipments() {
 
   const shipments = document.getElementById('shipments');
 
   const shipmentsLoader = document.getElementById('shipmentsLoader');
 
-  if (!silent) {
-    shipments.style.opacity = '0';
-  }
+  shipments.style.opacity = '0';
 
-  if (!silent) {
-    await new Promise(resolve =>
-      setTimeout(resolve, 200)
-    );
-  }
+  await new Promise(resolve =>
+    setTimeout(resolve, 200)
+  );
 
   shipments.innerHTML = '';
 
-  if (!silent) {
-    shipmentsLoader.classList.remove('hidden');
-  }
+  shipmentsLoader.classList.remove('hidden');
 
   const result = await api('getShipments');
 
-  if (!silent) {
-    shipmentsLoader.classList.add('hidden');
-  }
+  shipmentsLoader.classList.add('hidden');
 
   if (!result.success) {
 
-    if (!silent) {
-      shipments.style.opacity = '1';
-    }
+    shipments.style.opacity = '1';
   
-    if (!silent) {
-      showToast(result.error);
-    }
+    showToast(result.error);
   
     return;
   }
