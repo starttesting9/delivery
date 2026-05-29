@@ -313,12 +313,23 @@ textarea:focus {
 }
 
 .details-action.secondary {
-  color: #666;
-  background: #fafafa;
+  color: #444;
+  background: #f6f6f6;
+  border-color: #d8d8d8;
 }
 
 .details-action:hover {
   background: #f1f1f1;
+}
+
+.details-action:disabled {
+  color: #aaa;
+  background: #f8f8f8;
+  cursor: default;
+}
+
+.details-action:disabled:hover {
+  background: #f8f8f8;
 }
 
 .summary-item {
@@ -527,6 +538,15 @@ textarea:focus {
   color: #111;
 }
 
+#loadBtn.has-updates {
+  color: #b85c5c;
+  font-weight: 700;
+}
+
+#loadBtn.has-updates:hover {
+  color: #9f4545;
+}
+
 input,
 textarea,
 button,
@@ -632,6 +652,11 @@ button {
     transform 0.25s;
 
   z-index: 9999;
+}
+
+#toast.success {
+  color: #dff1e3;
+  background: rgba(79,138,91,0.96);
 }
 
 #toast.show {
