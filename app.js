@@ -4,6 +4,8 @@ let authToken = null;
 let currentUser = null;
 let sessionTimer = null;
 let editingShipmentId = null;
+let versionTimer = null;
+let lastKnownShipmentsVersion = '';
 
 const SHIPMENT_PRIORITIES = [
   'Звичайний',
@@ -31,6 +33,9 @@ const toggleFormText =
 
 const toggleFormIcon =
   document.getElementById('toggleFormIcon');
+
+const loadBtn =
+  document.getElementById('loadBtn');
 
 let formOpened = false;
 
@@ -120,6 +125,7 @@ async function handleCredentialResponse(response) {
   currentUser = result.data.user;
 
   startSessionTimer();
+  startVersionTimer();
 
   document.getElementById('userInfo')
     .innerText = currentUser.name;
@@ -188,11 +194,17 @@ function showLoginScreen() {
     .classList.remove('hidden');
 }
 
-function showToast(message) {
+function showToast(message, type = 'error') {
 
   const toast = document.getElementById('toast');
 
   toast.innerText = message;
+
+  toast.classList.remove('success');
+
+  if (type === 'success') {
+    toast.classList.add('success');
+  }
 
   toast.classList.add('show');
 
@@ -203,6 +215,71 @@ function showToast(message) {
     toast.classList.remove('show');
 
   }, 2500);
+}
+
+function getShipmentsVersion(items) {
+
+  return items.reduce((version, item) => {
+
+    const itemVersion = Number(
+      item.updatedAtVersion || 0
+    );
+
+    return itemVersion > version
+      ? itemVersion
+      : version;
+
+  }, 0).toString();
+}
+
+function setUpdateNotice(hasUpdates) {
+
+  if (hasUpdates) {
+    loadBtn.innerText = 'Є оновлення';
+    loadBtn.classList.add('has-updates');
+    return;
+  }
+
+  loadBtn.innerText = 'Оновити';
+  loadBtn.classList.remove('has-updates');
+}
+
+function startVersionTimer() {
+
+  clearInterval(versionTimer);
+
+  versionTimer = setInterval(
+    checkShipmentsVersion,
+    5 * 60 * 1000
+  );
+}
+
+async function checkShipmentsVersion() {
+
+  if (editingShipmentId) {
+    return;
+  }
+
+  try {
+    const result = await api('getShipmentsVersion');
+
+    if (!result.success) {
+      return;
+    }
+
+    const version = result.data.version || '';
+
+    if (
+      lastKnownShipmentsVersion &&
+      version &&
+      version !== lastKnownShipmentsVersion
+    ) {
+      setUpdateNotice(true);
+    }
+
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 function validateLength(value, min, max) {
@@ -399,7 +476,14 @@ async function loadShipments() {
     return;
   }
   
-  renderShipments(result.data || []);
+  const items = result.data || [];
+
+  lastKnownShipmentsVersion =
+    getShipmentsVersion(items);
+
+  setUpdateNotice(false);
+
+  renderShipments(items);
 
   shipments.style.opacity = '1';
 }
@@ -563,6 +647,7 @@ function renderEditForm(item) {
         <button
           type="button"
           class="details-action save-shipment-btn"
+          disabled
         >
           Зберегти
         </button>
@@ -592,6 +677,47 @@ function getEditData(details) {
     status: details.querySelector('.edit-status').value,
     comment: details.querySelector('.edit-comment').value.trim()
   };
+}
+
+function getItemEditData(item) {
+
+  return {
+    product: String(item.product || '').trim(),
+    priority: String(item.priority || ''),
+    unit: String(item.unit || '').trim(),
+    destination: String(item.destination || '').trim(),
+    method: String(item.method || '').trim(),
+    sentAt: formatDateTimeInput(item.sentAtRaw),
+    crew: String(item.crew || '').trim(),
+    status: String(item.status || ''),
+    comment: String(item.comment || '').trim()
+  };
+}
+
+function setupEditChangeTracking(item, details) {
+
+  const initialData = JSON.stringify(
+    getItemEditData(item)
+  );
+  const saveBtn =
+    details.querySelector('.save-shipment-btn');
+
+  const updateSaveState = () => {
+    const currentData = JSON.stringify(
+      getEditData(details)
+    );
+
+    saveBtn.disabled = currentData === initialData;
+  };
+
+  details
+    .querySelectorAll('input, select, textarea')
+    .forEach(input => {
+      input.addEventListener('input', updateSaveState);
+      input.addEventListener('change', updateSaveState);
+    });
+
+  updateSaveState();
 }
 
 function validateEditData(data) {
@@ -668,12 +794,15 @@ function validateEditData(data) {
 async function saveShipmentEdit(item, details) {
 
   const data = getEditData(details);
+  const saveBtn = details.querySelector('.save-shipment-btn');
+
+  if (saveBtn.disabled) {
+    return;
+  }
 
   if (!validateEditData(data)) {
     return;
   }
-
-  const saveBtn = details.querySelector('.save-shipment-btn');
 
   saveBtn.classList.add('loading');
 
@@ -713,7 +842,7 @@ async function saveShipmentEdit(item, details) {
     }
 
     editingShipmentId = null;
-    showToast('Зміни збережено');
+    showToast('Зміни збережено', 'success');
 
     await loadShipments();
 
@@ -851,6 +980,7 @@ function renderShipments(items) {
       if (event.target.classList.contains('edit-shipment-btn')) {
         editingShipmentId = item.id;
         details.innerHTML = renderEditForm(item);
+        setupEditChangeTracking(item, details);
         return;
       }
 
@@ -872,8 +1002,7 @@ function renderShipments(items) {
 document.getElementById('createBtn')
   .addEventListener('click', createShipment);
 
-document.getElementById('loadBtn')
-  .addEventListener('click', loadShipments);
+loadBtn.addEventListener('click', loadShipments);
 
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 
