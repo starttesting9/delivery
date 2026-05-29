@@ -277,11 +277,48 @@ textarea:focus {
 
 .card-details.details-open {
 
-  max-height: 300px;
+  max-height: 900px;
 
   opacity: 1;
 
   margin-top: 10px;
+}
+
+.details-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.details-edit-form input,
+.details-edit-form textarea,
+.details-edit-form select {
+  width: 100%;
+}
+
+.details-edit-form textarea {
+  min-height: 78px;
+  resize: vertical;
+}
+
+.details-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.details-action {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+
+.details-action.secondary {
+  color: #666;
+  background: #fafafa;
+}
+
+.details-action:hover {
+  background: #f1f1f1;
 }
 
 .summary-item {
@@ -687,7 +724,8 @@ html {
   position: relative;
 }
 
-#createBtn.loading::after {
+#createBtn.loading::after,
+.details-action.loading::after {
 
   content: '';
 
@@ -709,6 +747,12 @@ html {
 
   animation:
     buttonLoaderSpin 0.7s linear infinite;
+}
+
+.details-action.loading {
+  pointer-events: none;
+  color: transparent;
+  position: relative;
 }
 
 @keyframes buttonLoaderSpin {
