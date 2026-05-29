@@ -3,6 +3,23 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbz7tPrVsKyZ85-ga8iplEC7
 let authToken = null;
 let currentUser = null;
 let sessionTimer = null;
+let refreshTimer = null;
+let editingShipmentId = null;
+
+const SHIPMENT_PRIORITIES = [
+  'Звичайний',
+  'Високий'
+];
+
+const SHIPMENT_STATUSES = [
+  'Нова доставка',
+  'В процесі',
+  'Виконано',
+  'Не виконано',
+  'Втрачено/знищено'
+];
+
+const DEFAULT_SHIPMENT_STATUS = 'Нова доставка';
 
 const toggleFormBtn =
   document.getElementById('toggleFormBtn');
@@ -104,6 +121,7 @@ async function handleCredentialResponse(response) {
   currentUser = result.data.user;
 
   startSessionTimer();
+  startAutoRefresh();
 
   document.getElementById('userInfo')
     .innerText = currentUser.name;
@@ -193,6 +211,63 @@ function validateLength(value, min, max) {
 
   return value.length >= min &&
          value.length <= max;
+}
+
+function escapeHtml(value) {
+
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatDateTimeInput(value) {
+
+  if (!value) {
+    return '';
+  }
+
+  const date = new Date(value);
+
+  if (isNaN(date.getTime())) {
+    return '';
+  }
+
+  date.setMinutes(
+    date.getMinutes() - date.getTimezoneOffset()
+  );
+
+  return date.toISOString().slice(0, 16);
+}
+
+function canEditShipment(item) {
+
+  if (!currentUser) {
+    return false;
+  }
+
+  if (currentUser.role === 'admin') {
+    return true;
+  }
+
+  return item.createdBy === currentUser.email &&
+         item.status === DEFAULT_SHIPMENT_STATUS;
+}
+
+function buildOptions(options, selectedValue) {
+
+  return options
+    .map(option => `
+      <option
+        value="${escapeHtml(option)}"
+        ${option === selectedValue ? 'selected' : ''}
+      >
+        ${escapeHtml(option)}
+      </option>
+    `)
+    .join('');
 }
 
 async function createShipment() {
@@ -297,31 +372,58 @@ async function createShipment() {
   }
 }
 
-async function loadShipments() {
+function startAutoRefresh() {
+
+  clearInterval(refreshTimer);
+
+  refreshTimer = setInterval(() => {
+
+    if (editingShipmentId) {
+      return;
+    }
+
+    loadShipments(true);
+
+  }, 45000);
+}
+
+async function loadShipments(silent = false) {
 
   const shipments = document.getElementById('shipments');
 
   const shipmentsLoader = document.getElementById('shipmentsLoader');
 
-  shipments.style.opacity = '0';
+  if (!silent) {
+    shipments.style.opacity = '0';
+  }
 
-  await new Promise(resolve =>
-    setTimeout(resolve, 200)
-  );
+  if (!silent) {
+    await new Promise(resolve =>
+      setTimeout(resolve, 200)
+    );
+  }
 
   shipments.innerHTML = '';
 
-  shipmentsLoader.classList.remove('hidden');
+  if (!silent) {
+    shipmentsLoader.classList.remove('hidden');
+  }
 
   const result = await api('getShipments');
 
-  shipmentsLoader.classList.add('hidden');
+  if (!silent) {
+    shipmentsLoader.classList.add('hidden');
+  }
 
   if (!result.success) {
 
-    shipments.style.opacity = '1';
+    if (!silent) {
+      shipments.style.opacity = '1';
+    }
   
-    showToast(result.error);
+    if (!silent) {
+      showToast(result.error);
+    }
   
     return;
   }
@@ -348,6 +450,309 @@ function getStatusClass(status) {
 
     default:
       return '';
+  }
+}
+
+function renderDetailsView(item) {
+
+  const editButton = canEditShipment(item)
+    ? `
+      <button
+        type="button"
+        class="details-action edit-shipment-btn"
+      >
+        Змінити
+      </button>
+    `
+    : '';
+
+  return `
+    <div>
+      <b>Куди:</b> ${escapeHtml(item.destination)}
+    </div>
+
+    <div>
+      <b>Тип:</b> ${escapeHtml(item.product)}
+    </div>
+
+    <div>
+      <b>Підрозділ:</b> ${escapeHtml(item.unit || 'Не вказано')}
+    </div>
+  
+    <div>
+      <b>Дата створення заявки:</b> ${escapeHtml(item.createdAt)}
+    </div>
+  
+    <div>
+      <b>Тип БПЛА:</b> ${escapeHtml(item.method || 'Не вказано')}
+    </div>
+
+    <div>
+      <b>Дата відправки:</b> ${escapeHtml(item.sentAt || 'Не вказано')}
+    </div>
+
+    <div>
+      <b>Екіпаж:</b> ${escapeHtml(item.crew || 'Не вказано')}
+    </div>
+  
+    <div>
+      <b>Створив заявку:</b> ${escapeHtml(item.name)}
+    </div>
+  
+    <div>
+      <b>Статус:</b>
+    
+      <span class="${getStatusClass(item.status)}">
+        ${escapeHtml(item.status)}
+      </span>
+    </div>
+  
+    <div>
+      <b>ID:</b> ${escapeHtml(item.id)}
+    </div>
+  
+    ${item.comment
+      ? `
+        <div>
+          <b>Коментар:</b> ${escapeHtml(item.comment)}
+        </div>
+      `
+      : ''
+    }
+
+    ${editButton}
+  `;
+}
+
+function renderEditForm(item) {
+
+  return `
+    <div class="details-edit-form">
+
+      <input
+        type="text"
+        class="edit-product"
+        value="${escapeHtml(item.product)}"
+        placeholder="Тип забезпечення"
+      >
+
+      <div class="select-wrap">
+        <select class="edit-priority">
+          ${buildOptions(SHIPMENT_PRIORITIES, item.priority)}
+        </select>
+      </div>
+
+      <input
+        type="text"
+        class="edit-unit"
+        value="${escapeHtml(item.unit)}"
+        placeholder="Підрозділ"
+      >
+
+      <input
+        type="text"
+        class="edit-destination"
+        value="${escapeHtml(item.destination)}"
+        placeholder="Куди"
+      >
+
+      <input
+        type="text"
+        class="edit-method"
+        value="${escapeHtml(item.method)}"
+        placeholder="Тип БПЛА"
+      >
+
+      <input
+        type="datetime-local"
+        class="edit-sent-at"
+        value="${formatDateTimeInput(item.sentAtRaw)}"
+        aria-label="Дата відправки"
+      >
+
+      <input
+        type="text"
+        class="edit-crew"
+        value="${escapeHtml(item.crew)}"
+        placeholder="Екіпаж"
+      >
+
+      <div class="select-wrap">
+        <select class="edit-status">
+          ${buildOptions(SHIPMENT_STATUSES, item.status)}
+        </select>
+      </div>
+
+      <textarea
+        class="edit-comment"
+        placeholder="Коментар"
+      >${escapeHtml(item.comment)}</textarea>
+
+      <div class="details-actions">
+        <button
+          type="button"
+          class="details-action save-shipment-btn"
+        >
+          Зберегти
+        </button>
+
+        <button
+          type="button"
+          class="details-action secondary cancel-edit-btn"
+        >
+          Скасувати
+        </button>
+      </div>
+
+    </div>
+  `;
+}
+
+function getEditData(details) {
+
+  return {
+    product: details.querySelector('.edit-product').value.trim(),
+    priority: details.querySelector('.edit-priority').value,
+    unit: details.querySelector('.edit-unit').value.trim(),
+    destination: details.querySelector('.edit-destination').value.trim(),
+    method: details.querySelector('.edit-method').value.trim(),
+    sentAt: details.querySelector('.edit-sent-at').value.trim(),
+    crew: details.querySelector('.edit-crew').value.trim(),
+    status: details.querySelector('.edit-status').value,
+    comment: details.querySelector('.edit-comment').value.trim()
+  };
+}
+
+function validateEditData(data) {
+
+  if (!data.product) {
+    showToast('Вкажіть тип забезпечення');
+    return false;
+  }
+
+  if (!validateLength(data.product, 2, 80)) {
+    showToast(
+      'Тип забезпечення повинен містити від 2 до 80 символів'
+    );
+
+    return false;
+  }
+
+  if (!data.priority) {
+    showToast('Вкажіть пріоритет');
+    return false;
+  }
+
+  if (!data.unit) {
+    showToast('Вкажіть підрозділ');
+    return false;
+  }
+
+  if (!validateLength(data.unit, 2, 30)) {
+    showToast(
+      'Підрозділ повинен містити від 2 до 30 символів'
+    );
+
+    return false;
+  }
+
+  if (
+    data.method &&
+    !validateLength(data.method, 2, 40)
+  ) {
+    showToast(
+      'Тип БПЛА повинен містити від 2 до 40 символів'
+    );
+
+    return false;
+  }
+
+  if (
+    data.crew &&
+    !validateLength(data.crew, 2, 40)
+  ) {
+    showToast(
+      'Екіпаж повинен містити від 2 до 40 символів'
+    );
+
+    return false;
+  }
+
+  if (!data.destination) {
+    showToast('Вкажіть куди');
+    return false;
+  }
+
+  if (!validateLength(data.destination, 2, 180)) {
+    showToast(
+      'Поле "Куди" повинно містити від 2 до 180 символів'
+    );
+
+    return false;
+  }
+
+  return true;
+}
+
+async function saveShipmentEdit(item, details) {
+
+  const data = getEditData(details);
+
+  if (!validateEditData(data)) {
+    return;
+  }
+
+  const saveBtn = details.querySelector('.save-shipment-btn');
+
+  saveBtn.classList.add('loading');
+
+  try {
+    const result = await api(
+      'updateShipment',
+      {
+        id: item.id,
+        expectedUpdatedAt: item.updatedAtVersion,
+        ...data
+      }
+    );
+
+    if (!result.success) {
+      if (result.error === 'CONFLICT') {
+        showToast(
+          'Заявку вже змінили. Оновлюю список'
+        );
+
+        editingShipmentId = null;
+        await loadShipments();
+        return;
+      }
+
+      if (
+        result.error === 'FORBIDDEN' ||
+        result.error === 'FORBIDDEN_STATUS'
+      ) {
+        showToast('Недостатньо прав для редагування');
+        editingShipmentId = null;
+        await loadShipments();
+        return;
+      }
+
+      showToast(result.error);
+      return;
+    }
+
+    editingShipmentId = null;
+    showToast('Зміни збережено');
+
+    await loadShipments();
+
+  } catch (e) {
+    console.error(e);
+
+    showToast('Помилка збереження заявки');
+
+  } finally {
+    saveBtn.classList.remove('loading');
   }
 }
 
@@ -395,7 +800,7 @@ function renderShipments(items) {
       <div class="card-header">
 
         <div class="card-destination">
-          ${item.destination}
+          ${escapeHtml(item.priority)}
         </div>
 
       </div>
@@ -405,25 +810,25 @@ function renderShipments(items) {
         <div class="card-summary">
       
           <div class="summary-item">
-            🚁 ${item.product}
+            🚁 ${escapeHtml(item.product)}
           </div>
       
           <span class="card-dot">•</span>
       
           <div class="summary-item">
-            ${item.method || 'Не вказано'}
+            ${escapeHtml(item.destination)}
           </div>
       
           <span class="card-dot">•</span>
       
           <div class="summary-item ${getStatusClass(item.status)}">
-            ${item.status}
+            ${escapeHtml(item.status)}
           </div>
       
         </div>
       
         <div class="card-date">
-          ${item.createdAt}
+          ${escapeHtml(item.createdAt)}
         </div>
       
       </div>
@@ -432,62 +837,7 @@ function renderShipments(items) {
         Деталі ⌄
       </div>
 
-      <div class="card-details">
-
-        <div>
-          <b>Куди:</b> ${item.destination}
-        </div>
-
-        <div>
-          <b>Тип:</b> ${item.product}
-        </div>
-
-        <div>
-          <b>Підрозділ:</b> ${item.unit || 'Не вказано'}
-        </div>
-      
-        <div>
-          <b>Дата створення заявки:</b> ${item.createdAt}
-        </div>
-      
-        <div>
-          <b>Тип БПЛА:</b> ${item.method || 'Не вказано'}
-        </div>
-
-        <div>
-          <b>Дата відправки:</b> ${item.sentAt || 'Не вказано'}
-        </div>
-
-        <div>
-          <b>Екіпаж:</b> ${item.crew || 'Не вказано'}
-        </div>
-      
-        <div>
-          <b>Створив заявку:</b> ${item.name}
-        </div>
-      
-        <div>
-          <b>Статус:</b>
-        
-          <span class="${getStatusClass(item.status)}">
-            ${item.status}
-          </span>
-        </div>
-      
-        <div>
-          <b>ID:</b> ${item.id}
-        </div>
-      
-        ${item.comment
-          ? `
-            <div>
-              <b>Коментар:</b> ${item.comment}
-            </div>
-          `
-          : ''
-        }
-      
-      </div>
+      <div class="card-details"></div>
     `;
 
     const toggle =
@@ -497,6 +847,8 @@ function renderShipments(items) {
       div.querySelector('.card-details');
 
     let opened = false;
+
+    details.innerHTML = renderDetailsView(item);
 
     toggle.addEventListener('click', () => {
 
@@ -511,10 +863,34 @@ function renderShipments(items) {
 
       } else {
 
+        if (editingShipmentId === item.id) {
+          editingShipmentId = null;
+          details.innerHTML = renderDetailsView(item);
+        }
+
         details.classList.remove('details-open');
 
         toggle.innerText =
           'Деталі ⌄';
+      }
+    });
+
+    details.addEventListener('click', async event => {
+
+      if (event.target.classList.contains('edit-shipment-btn')) {
+        editingShipmentId = item.id;
+        details.innerHTML = renderEditForm(item);
+        return;
+      }
+
+      if (event.target.classList.contains('cancel-edit-btn')) {
+        editingShipmentId = null;
+        details.innerHTML = renderDetailsView(item);
+        return;
+      }
+
+      if (event.target.classList.contains('save-shipment-btn')) {
+        await saveShipmentEdit(item, details);
       }
     });
 
