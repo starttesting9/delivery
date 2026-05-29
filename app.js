@@ -3,6 +3,8 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbz7tPrVsKyZ85-ga8iplEC7
 let authToken = null;
 let currentUser = null;
 let sessionTimer = null;
+let sessionExpireTimer = null;
+let sessionExpired = false;
 let editingShipmentId = null;
 let versionTimer = null;
 let lastKnownShipmentsVersion = '';
@@ -68,6 +70,9 @@ toggleFormBtn.addEventListener('click', () => {
 function startSessionTimer() {
 
   clearTimeout(sessionTimer);
+  clearTimeout(sessionExpireTimer);
+
+  sessionExpired = false;
 
   sessionTimer = setTimeout(() => {
 
@@ -77,7 +82,10 @@ function startSessionTimer() {
 
   }, 50 * 60 * 1000);
 
-  setTimeout(() => {
+  sessionExpireTimer = setTimeout(() => {
+
+    sessionExpired = true;
+    stopVersionTimer();
 
     document
       .getElementById('sessionExpired')
@@ -254,9 +262,18 @@ function startVersionTimer() {
   );
 }
 
+function stopVersionTimer() {
+
+  clearInterval(versionTimer);
+  versionTimer = null;
+}
+
 async function checkShipmentsVersion() {
 
-  if (editingShipmentId) {
+  if (
+    sessionExpired ||
+    editingShipmentId
+  ) {
     return;
   }
 
