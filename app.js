@@ -8,11 +8,10 @@ let sessionExpired = false;
 let editingShipmentId = null;
 let versionTimer = null;
 let lastKnownShipmentsVersion = '';
-
-const SHIPMENT_PRIORITIES = [
-  'Звичайний',
-  'Високий'
-];
+let shipmentOptions = {
+  units: [],
+  destinations: []
+};
 
 const SHIPMENT_STATUSES = [
   'Нова доставка',
@@ -138,6 +137,7 @@ async function handleCredentialResponse(response) {
   document.getElementById('userInfo')
     .innerText = currentUser.name;
 
+  await loadShipmentOptions();
   await loadShipments();
 
   document.getElementById('loader')
@@ -222,7 +222,7 @@ function showToast(message, type = 'error') {
 
     toast.classList.remove('show');
 
-  }, 4000);
+  }, 2500);
 }
 
 function getShipmentsVersion(items) {
@@ -258,7 +258,7 @@ function startVersionTimer() {
 
   versionTimer = setInterval(
     checkShipmentsVersion,
-    5 * 60 * 1000
+    60 * 1000
   );
 }
 
@@ -350,7 +350,16 @@ function canEditShipment(item) {
 
 function buildOptions(options, selectedValue) {
 
-  return options
+  const values = [...options];
+
+  if (
+    selectedValue &&
+    !values.includes(selectedValue)
+  ) {
+    values.unshift(selectedValue);
+  }
+
+  return values
     .map(option => `
       <option
         value="${escapeHtml(option)}"
@@ -362,10 +371,59 @@ function buildOptions(options, selectedValue) {
     .join('');
 }
 
+function populateSelect(select, options, placeholder) {
+
+  select.innerHTML = `
+    <option value="" disabled selected>
+      ${escapeHtml(placeholder)}
+    </option>
+  `;
+
+  options.forEach(option => {
+    const item = document.createElement('option');
+
+    item.value = option;
+    item.innerText = option;
+
+    select.appendChild(item);
+  });
+}
+
+function populateCreateOptions() {
+
+  populateSelect(
+    document.getElementById('unit'),
+    shipmentOptions.units,
+    'Оберіть підрозділ'
+  );
+
+  populateSelect(
+    document.getElementById('destination'),
+    shipmentOptions.destinations,
+    'Оберіть куди'
+  );
+}
+
+async function loadShipmentOptions() {
+
+  const result = await api('getShipmentOptions');
+
+  if (!result.success) {
+    showToast(result.error);
+    return;
+  }
+
+  shipmentOptions = {
+    units: result.data.units || [],
+    destinations: result.data.destinations || []
+  };
+
+  populateCreateOptions();
+}
+
 async function createShipment() {
 
   const product = document.getElementById('product').value.trim();
-  const priority = document.getElementById('priority').value;
   const unit = document.getElementById('unit').value.trim();
   const destination = document.getElementById('destination').value.trim();
   const comment = document.getElementById('comment').value.trim();
@@ -380,11 +438,6 @@ async function createShipment() {
       'Тип забезпечення повинен містити від 2 до 80 символів'
     );
 
-    return;
-  }
-
-  if (!priority) {
-    showToast('Вкажіть пріоритет');
     return;
   }
 
@@ -424,7 +477,6 @@ async function createShipment() {
       {
         name: currentUser.name,
         product,
-        priority,
         unit,
         destination,
         comment
@@ -437,7 +489,6 @@ async function createShipment() {
     }
 
     document.getElementById('product').value = '';
-    document.getElementById('priority').value = '';
     document.getElementById('unit').value = '';
     document.getElementById('destination').value = '';
     document.getElementById('comment').value = '';
@@ -609,24 +660,19 @@ function renderEditForm(item) {
       >
 
       <div class="select-wrap">
-        <select class="edit-priority">
-          ${buildOptions(SHIPMENT_PRIORITIES, item.priority)}
+        <select class="edit-unit">
+          ${buildOptions(shipmentOptions.units, item.unit)}
         </select>
       </div>
 
-      <input
-        type="text"
-        class="edit-unit"
-        value="${escapeHtml(item.unit)}"
-        placeholder="Підрозділ"
-      >
-
-      <input
-        type="text"
-        class="edit-destination"
-        value="${escapeHtml(item.destination)}"
-        placeholder="Куди"
-      >
+      <div class="select-wrap">
+        <select class="edit-destination">
+          ${buildOptions(
+            shipmentOptions.destinations,
+            item.destination
+          )}
+        </select>
+      </div>
 
       <input
         type="text"
@@ -685,7 +731,6 @@ function getEditData(details) {
 
   return {
     product: details.querySelector('.edit-product').value.trim(),
-    priority: details.querySelector('.edit-priority').value,
     unit: details.querySelector('.edit-unit').value.trim(),
     destination: details.querySelector('.edit-destination').value.trim(),
     method: details.querySelector('.edit-method').value.trim(),
@@ -700,7 +745,6 @@ function getItemEditData(item) {
 
   return {
     product: String(item.product || '').trim(),
-    priority: String(item.priority || ''),
     unit: String(item.unit || '').trim(),
     destination: String(item.destination || '').trim(),
     method: String(item.method || '').trim(),
@@ -749,11 +793,6 @@ function validateEditData(data) {
       'Тип забезпечення повинен містити від 2 до 80 символів'
     );
 
-    return false;
-  }
-
-  if (!data.priority) {
-    showToast('Вкажіть пріоритет');
     return false;
   }
 
@@ -913,14 +952,6 @@ function renderShipments(items) {
       `${index * 70}ms`;
 
     div.innerHTML = `
-
-      <div class="card-header">
-
-        <div class="card-destination">
-          ${escapeHtml(item.priority)}
-        </div>
-
-      </div>
 
       <div class="card-main">
 
