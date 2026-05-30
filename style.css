@@ -205,23 +205,6 @@ textarea:focus {
   margin-bottom: 10px;
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.card-destination {
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.2;
-  color: #111;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .card-main {
   display: flex;
   flex-direction: column;
@@ -541,10 +524,29 @@ textarea:focus {
 #loadBtn.has-updates {
   color: #b85c5c;
   font-weight: 700;
+  animation:
+    updatePulse 1.15s ease-in-out infinite;
 }
 
 #loadBtn.has-updates:hover {
   color: #9f4545;
+}
+
+@keyframes updatePulse {
+
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(1);
+    text-shadow: none;
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+    text-shadow:
+      0 0 12px rgba(184,92,92,0.42);
+  }
 }
 
 input,
@@ -997,17 +999,6 @@ html {
   textarea,
   select {
     font-size: 16px;
-  }
-
-  .card-destination {
-
-    display: -webkit-box;
-  
-    -webkit-line-clamp: 1;
-  
-    -webkit-box-orient: vertical;
-  
-    overflow: hidden;
   }
 
   .summary-item {
