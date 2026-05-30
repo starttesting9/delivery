@@ -336,16 +336,7 @@ function formatDateTimeInput(value) {
 
 function canEditShipment(item) {
 
-  if (!currentUser) {
-    return false;
-  }
-
-  if (currentUser.role === 'admin') {
-    return true;
-  }
-
-  return item.createdBy === currentUser.email &&
-         item.status === DEFAULT_SHIPMENT_STATUS;
+  return Boolean(currentUser);
 }
 
 function buildOptions(options, selectedValue) {
