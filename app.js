@@ -9,6 +9,7 @@ let editingShipmentId = null;
 let versionTimer = null;
 let lastKnownShipmentsVersion = '';
 let allShipments = [];
+let activeListFilter = null;
 let shipmentOptions = {
   units: [],
   destinations: []
@@ -77,6 +78,15 @@ const addDashboardFilterBtn =
 
 const buildDashboardBtn =
   document.getElementById('buildDashboardBtn');
+
+const listFilterNotice =
+  document.getElementById('listFilterNotice');
+
+const listFilterText =
+  document.getElementById('listFilterText');
+
+const clearListFilterBtn =
+  document.getElementById('clearListFilterBtn');
 
 let formOpened = false;
 
@@ -384,11 +394,14 @@ function formatTimePartInput(value) {
 
 function combineDateTimeInput(dateValue, timeValue) {
 
-  if (!dateValue) {
+  if (
+    !dateValue ||
+    !timeValue
+  ) {
     return '';
   }
 
-  return `${dateValue}T${timeValue || '00:00'}`;
+  return `${dateValue}T${timeValue}`;
 }
 
 function formatDateInput(date) {
@@ -618,7 +631,7 @@ async function loadShipments() {
 
   setUpdateNotice(false);
 
-  renderShipments(items);
+  renderVisibleShipments();
   renderDashboard();
 
   shipments.style.opacity = '1';
@@ -843,6 +856,75 @@ function filterDashboardShipments() {
   });
 }
 
+function getDashboardGroupItems(groupKey, groupValue) {
+
+  const filteredItems = filterDashboardShipments();
+
+  if (!filteredItems) {
+    return [];
+  }
+
+  return filteredItems.filter(item => {
+    return String(item[groupKey] || 'Не вказано') === groupValue;
+  });
+}
+
+function updateListFilterNotice() {
+
+  if (!activeListFilter) {
+    listFilterNotice.classList.add('hidden');
+    listFilterText.innerText = '';
+    return;
+  }
+
+  listFilterText.innerText =
+    `Показано за статистикою: ${activeListFilter.label}`;
+
+  listFilterNotice.classList.remove('hidden');
+}
+
+function getVisibleShipments() {
+
+  if (!activeListFilter) {
+    return allShipments;
+  }
+
+  return getDashboardGroupItems(
+    activeListFilter.groupKey,
+    activeListFilter.groupValue
+  );
+}
+
+function renderVisibleShipments() {
+
+  updateListFilterNotice();
+  renderShipments(getVisibleShipments());
+}
+
+function applyDashboardListFilter(groupKey, groupValue) {
+
+  activeListFilter = {
+    groupKey,
+    groupValue,
+    label: `${getDashboardFilterLabel(groupKey)}: ${groupValue}`
+  };
+
+  renderVisibleShipments();
+
+  document
+    .querySelector('.shipments-header')
+    .scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+}
+
+function clearDashboardListFilter() {
+
+  activeListFilter = null;
+  renderVisibleShipments();
+}
+
 function getDashboardBreakdown(items) {
 
   const groupKey = dashboardGroupBy.value;
@@ -901,7 +983,14 @@ function renderDashboardChart(items) {
     <div class="dashboard-bars">
       ${breakdown
         .map(item => `
-          <div class="dashboard-bar-row">
+          <div
+            class="dashboard-bar-row"
+            data-group-key="${escapeHtml(groupKey)}"
+            data-group-value="${escapeHtml(item.label)}"
+            tabindex="0"
+            role="button"
+            aria-label="Показати заявки: ${escapeHtml(item.label)}"
+          >
             <div class="dashboard-bar-label">
               ${escapeHtml(item.label)}
             </div>
@@ -942,6 +1031,29 @@ function renderDashboard() {
 
   dashboardResult.innerHTML =
     renderDashboardChart(filteredItems);
+
+  dashboardResult
+    .querySelectorAll('.dashboard-bar-row')
+    .forEach(row => {
+      const applyFilter = () => {
+        applyDashboardListFilter(
+          row.dataset.groupKey,
+          row.dataset.groupValue
+        );
+      };
+
+      row.addEventListener('click', applyFilter);
+
+      row.addEventListener('keydown', event => {
+        if (
+          event.key === 'Enter' ||
+          event.key === ' '
+        ) {
+          event.preventDefault();
+          applyFilter();
+        }
+      });
+    });
 }
 
 function setupAdminDashboard() {
@@ -1165,6 +1277,8 @@ function getEditData(details) {
     unit: details.querySelector('.edit-unit').value.trim(),
     destination: details.querySelector('.edit-destination').value.trim(),
     method: details.querySelector('.edit-method').value.trim(),
+    sentDate,
+    sentTime,
     sentAt: combineDateTimeInput(sentDate, sentTime),
     crew: details.querySelector('.edit-crew').value.trim(),
     status: details.querySelector('.edit-status').value,
@@ -1179,6 +1293,8 @@ function getItemEditData(item) {
     unit: String(item.unit || '').trim(),
     destination: String(item.destination || '').trim(),
     method: String(item.method || '').trim(),
+    sentDate: formatDatePartInput(item.sentAtRaw),
+    sentTime: formatTimePartInput(item.sentAtRaw),
     sentAt: combineDateTimeInput(
       formatDatePartInput(item.sentAtRaw),
       formatTimePartInput(item.sentAtRaw)
@@ -1262,6 +1378,22 @@ function validateEditData(data) {
       'Екіпаж повинен містити від 2 до 40 символів'
     );
 
+    return false;
+  }
+
+  if (
+    data.sentDate &&
+    !data.sentTime
+  ) {
+    showToast('Вкажіть час відправки');
+    return false;
+  }
+
+  if (
+    data.sentTime &&
+    !data.sentDate
+  ) {
+    showToast('Вкажіть дату відправки або очистіть час');
     return false;
   }
 
@@ -1367,7 +1499,11 @@ function renderShipments(items) {
         </div>
 
         <div class="empty-text">
-          У вас ще немає відправок
+          ${
+            activeListFilter
+              ? 'За вибраним результатом заявок немає'
+              : 'У вас ще немає відправок'
+          }
         </div>
 
       </div>
@@ -1392,7 +1528,19 @@ function renderShipments(items) {
         <div class="card-summary">
       
           <div class="summary-item">
-            🚁 ${escapeHtml(item.product)}
+            <span class="drone-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" focusable="false">
+                <circle cx="16" cy="16" r="12"></circle>
+                <circle cx="48" cy="16" r="12"></circle>
+                <circle cx="16" cy="48" r="12"></circle>
+                <circle cx="48" cy="48" r="12"></circle>
+                <path d="M22 22 32 32 42 22"></path>
+                <path d="M22 42 32 32 42 42"></path>
+                <rect x="26" y="20" width="12" height="24" rx="3"></rect>
+                <circle cx="32" cy="32" r="2.8"></circle>
+              </svg>
+            </span>
+            ${escapeHtml(item.product)}
           </div>
       
           <span class="card-dot">•</span>
@@ -1493,6 +1641,8 @@ addDashboardFilterBtn.addEventListener('click', () => {
 buildDashboardBtn.addEventListener('click', renderDashboard);
 
 dashboardGroupBy.addEventListener('change', renderDashboard);
+
+clearListFilterBtn.addEventListener('click', clearDashboardListFilter);
 
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 
