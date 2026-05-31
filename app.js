@@ -679,8 +679,11 @@ function syncDashboardRemoveButtons() {
 
   rows.forEach(row => {
     const removeBtn = row.querySelector('.dashboard-remove-filter');
+    const isSingleRow = rows.length === 1;
 
-    removeBtn.disabled = rows.length === 1;
+    removeBtn.disabled = isSingleRow;
+    removeBtn.classList.toggle('hidden', isSingleRow);
+    row.classList.toggle('single-filter', isSingleRow);
   });
 }
 
