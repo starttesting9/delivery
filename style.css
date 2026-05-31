@@ -680,6 +680,25 @@ textarea:focus {
   grid-template-columns: minmax(110px, 170px) 1fr 34px;
   align-items: center;
   gap: 10px;
+
+  padding: 3px 0;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.dashboard-bar-row:hover,
+.dashboard-bar-row:focus-visible {
+  background: #fafafa;
+
+  outline: none;
+
+  transform: translateX(2px);
 }
 
 .dashboard-bar-label {
@@ -765,6 +784,56 @@ textarea:focus {
 .shipments-title {
   font-size: 16px;
   font-weight: 600;
+}
+
+.list-filter-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  margin:
+    -4px 0
+    14px;
+  padding: 10px 12px;
+
+  background: rgba(255,255,255,0.72);
+
+  border: 1px solid #ececec;
+  border-radius: 12px;
+}
+
+#listFilterText {
+  overflow: hidden;
+
+  color: #555;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#clearListFilterBtn {
+  flex: 0 0 auto;
+
+  padding: 6px 10px;
+
+  color: #716e6e;
+
+  background: white;
+
+  border-color: #e8e8e8;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#clearListFilterBtn:hover {
+  color: #111;
+
+  background: #f8f8f8;
 }
 
 #loadBtn {
@@ -1388,6 +1457,11 @@ html {
     gap: 7px;
   }
 
+  .dashboard-bar-row:hover,
+  .dashboard-bar-row:focus-visible {
+    transform: none;
+  }
+
   .dashboard-bar-label {
     grid-column: 1 / -1;
   }
@@ -1401,6 +1475,17 @@ html {
 
   .shipments-title {
     font-size: 14px;
+  }
+
+  .list-filter-notice {
+    align-items: stretch;
+    flex-direction: column;
+
+    margin-bottom: 12px;
+  }
+
+  #listFilterText {
+    white-space: normal;
   }
 
   #loadBtn {
