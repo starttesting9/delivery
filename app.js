@@ -8,6 +8,7 @@ let sessionExpired = false;
 let editingShipmentId = null;
 let versionTimer = null;
 let lastKnownShipmentsVersion = '';
+let allShipments = [];
 let shipmentOptions = {
   units: [],
   destinations: []
@@ -23,6 +24,21 @@ const SHIPMENT_STATUSES = [
 
 const DEFAULT_SHIPMENT_STATUS = 'Нова доставка';
 
+const DASHBOARD_FILTERS = [
+  {
+    key: 'status',
+    label: 'Статус'
+  },
+  {
+    key: 'unit',
+    label: 'Підрозділ'
+  },
+  {
+    key: 'destination',
+    label: 'Куди'
+  }
+];
+
 const toggleFormBtn =
   document.getElementById('toggleFormBtn');
 
@@ -37,6 +53,27 @@ const toggleFormIcon =
 
 const loadBtn =
   document.getElementById('loadBtn');
+
+const adminDashboard =
+  document.getElementById('adminDashboard');
+
+const dashboardFrom =
+  document.getElementById('dashboardFrom');
+
+const dashboardTo =
+  document.getElementById('dashboardTo');
+
+const dashboardFilters =
+  document.getElementById('dashboardFilters');
+
+const dashboardResult =
+  document.getElementById('dashboardResult');
+
+const addDashboardFilterBtn =
+  document.getElementById('addDashboardFilterBtn');
+
+const buildDashboardBtn =
+  document.getElementById('buildDashboardBtn');
 
 let formOpened = false;
 
@@ -138,6 +175,7 @@ async function handleCredentialResponse(response) {
     .innerText = currentUser.name;
 
   await loadShipmentOptions();
+  setupAdminDashboard();
   await loadShipments();
 
   document.getElementById('loader')
@@ -332,6 +370,23 @@ function formatDateTimeInput(value) {
   );
 
   return date.toISOString().slice(0, 16);
+}
+
+function formatDateInput(date) {
+
+  const value = new Date(date);
+
+  value.setMinutes(
+    value.getMinutes() - value.getTimezoneOffset()
+  );
+
+  return value.toISOString().slice(0, 10);
+}
+
+function isAdmin() {
+
+  return currentUser &&
+         String(currentUser.role).toLowerCase() === 'admin';
 }
 
 function canEditShipment(item) {
@@ -537,14 +592,310 @@ async function loadShipments() {
   
   const items = result.data || [];
 
+  allShipments = items;
+
   lastKnownShipmentsVersion =
     getShipmentsVersion(items);
 
   setUpdateNotice(false);
 
   renderShipments(items);
+  renderDashboard();
 
   shipments.style.opacity = '1';
+}
+
+function getDashboardValues(key) {
+
+  if (key === 'status') {
+    return SHIPMENT_STATUSES;
+  }
+
+  if (key === 'unit') {
+    return shipmentOptions.units;
+  }
+
+  if (key === 'destination') {
+    return shipmentOptions.destinations;
+  }
+
+  return [];
+}
+
+function getDashboardFilterRows() {
+
+  return Array.from(
+    dashboardFilters.querySelectorAll('.dashboard-filter-row')
+  );
+}
+
+function buildFilterTypeOptions(selectedKey) {
+
+  return DASHBOARD_FILTERS
+    .map(filter => `
+      <option
+        value="${escapeHtml(filter.key)}"
+        ${filter.key === selectedKey ? 'selected' : ''}
+      >
+        ${escapeHtml(filter.label)}
+      </option>
+    `)
+    .join('');
+}
+
+function buildFilterValueOptions(key, selectedValue) {
+
+  const values = getDashboardValues(key);
+
+  return values
+    .map(value => `
+      <option
+        value="${escapeHtml(value)}"
+        ${value === selectedValue ? 'selected' : ''}
+      >
+        ${escapeHtml(value)}
+      </option>
+    `)
+    .join('');
+}
+
+function syncDashboardRemoveButtons() {
+
+  const rows = getDashboardFilterRows();
+
+  rows.forEach(row => {
+    const removeBtn = row.querySelector('.dashboard-remove-filter');
+
+    removeBtn.disabled = rows.length === 1;
+  });
+}
+
+function addDashboardFilter(
+  key = 'status',
+  value = DEFAULT_SHIPMENT_STATUS
+) {
+
+  const values = getDashboardValues(key);
+  const selectedValue = values.includes(value)
+    ? value
+    : values[0] || '';
+
+  const row = document.createElement('div');
+
+  row.className = 'dashboard-filter-row';
+
+  row.innerHTML = `
+    <div class="select-wrap">
+      <select class="dashboard-filter-type">
+        ${buildFilterTypeOptions(key)}
+      </select>
+    </div>
+
+    <div class="select-wrap">
+      <select class="dashboard-filter-value">
+        ${buildFilterValueOptions(key, selectedValue)}
+      </select>
+    </div>
+
+    <button
+      type="button"
+      class="dashboard-remove-filter"
+      aria-label="Прибрати параметр"
+    >
+      ×
+    </button>
+  `;
+
+  const typeSelect =
+    row.querySelector('.dashboard-filter-type');
+
+  const valueSelect =
+    row.querySelector('.dashboard-filter-value');
+
+  typeSelect.addEventListener('change', () => {
+    const valuesForType =
+      getDashboardValues(typeSelect.value);
+
+    valueSelect.innerHTML = buildFilterValueOptions(
+      typeSelect.value,
+      valuesForType[0] || ''
+    );
+  });
+
+  row
+    .querySelector('.dashboard-remove-filter')
+    .addEventListener('click', () => {
+      if (getDashboardFilterRows().length === 1) {
+        return;
+      }
+
+      row.remove();
+      syncDashboardRemoveButtons();
+    });
+
+  dashboardFilters.appendChild(row);
+  syncDashboardRemoveButtons();
+}
+
+function getDashboardFilters() {
+
+  return getDashboardFilterRows()
+    .map(row => ({
+      key: row.querySelector('.dashboard-filter-type').value,
+      value: row.querySelector('.dashboard-filter-value').value
+    }))
+    .filter(filter => filter.key && filter.value);
+}
+
+function getShipmentDate(item) {
+
+  const date = new Date(item.createdAtRaw);
+
+  if (isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date;
+}
+
+function isShipmentInDashboardPeriod(item, fromDate, toDate) {
+
+  const date = getShipmentDate(item);
+
+  if (!date) {
+    return false;
+  }
+
+  return date >= fromDate &&
+         date <= toDate;
+}
+
+function filterDashboardShipments() {
+
+  const fromDate = new Date(`${dashboardFrom.value}T00:00:00`);
+  const toDate = new Date(`${dashboardTo.value}T23:59:59`);
+  const filters = getDashboardFilters();
+
+  if (
+    isNaN(fromDate.getTime()) ||
+    isNaN(toDate.getTime()) ||
+    fromDate > toDate
+  ) {
+    showToast('Перевірте період статистики');
+    return null;
+  }
+
+  return allShipments.filter(item => {
+    if (!isShipmentInDashboardPeriod(item, fromDate, toDate)) {
+      return false;
+    }
+
+    return filters.every(filter => {
+      return String(item[filter.key] || '') === filter.value;
+    });
+  });
+}
+
+function getStatusBreakdown(items) {
+
+  return SHIPMENT_STATUSES
+    .map(status => ({
+      label: status,
+      count: items.filter(item => item.status === status).length
+    }))
+    .filter(item => item.count > 0);
+}
+
+function renderDashboardChart(items) {
+
+  const breakdown = getStatusBreakdown(items);
+  const total = items.length;
+  const maxCount = Math.max(
+    ...breakdown.map(item => item.count),
+    1
+  );
+
+  if (!total) {
+    return `
+      <div class="dashboard-empty">
+        За вибраними параметрами заявок немає
+      </div>
+    `;
+  }
+
+  return `
+    <div class="dashboard-total">
+      <span>${total}</span>
+      <small>заявок за період</small>
+    </div>
+
+    <div class="dashboard-bars">
+      ${breakdown
+        .map(item => `
+          <div class="dashboard-bar-row">
+            <div class="dashboard-bar-label">
+              ${escapeHtml(item.label)}
+            </div>
+
+            <div class="dashboard-bar-track">
+              <div
+                class="dashboard-bar-fill ${getStatusClass(item.label)}"
+                style="width: ${(item.count / maxCount) * 100}%"
+              ></div>
+            </div>
+
+            <div class="dashboard-bar-count">
+              ${item.count}
+            </div>
+          </div>
+        `)
+        .join('')
+      }
+    </div>
+  `;
+}
+
+function renderDashboard() {
+
+  if (!isAdmin()) {
+    return;
+  }
+
+  const filteredItems = filterDashboardShipments();
+
+  if (!filteredItems) {
+    return;
+  }
+
+  dashboardResult.innerHTML =
+    renderDashboardChart(filteredItems);
+}
+
+function setupAdminDashboard() {
+
+  if (!isAdmin()) {
+    adminDashboard.classList.add('hidden');
+    return;
+  }
+
+  const today = new Date();
+  const monthStart = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    1
+  );
+
+  adminDashboard.classList.remove('hidden');
+
+  dashboardFrom.value = formatDateInput(monthStart);
+  dashboardTo.value = formatDateInput(today);
+
+  dashboardFilters.innerHTML = '';
+
+  addDashboardFilter(
+    'status',
+    DEFAULT_SHIPMENT_STATUS
+  );
 }
 
 function getStatusClass(status) {
@@ -1042,6 +1393,12 @@ document.getElementById('createBtn')
   .addEventListener('click', createShipment);
 
 loadBtn.addEventListener('click', loadShipments);
+
+addDashboardFilterBtn.addEventListener('click', () => {
+  addDashboardFilter('status', DEFAULT_SHIPMENT_STATUS);
+});
+
+buildDashboardBtn.addEventListener('click', renderDashboard);
 
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 
