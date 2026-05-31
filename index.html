@@ -76,6 +76,60 @@
       
       </div>
 
+      <section id="adminDashboard" class="admin-dashboard hidden">
+
+        <div class="dashboard-header">
+
+          <div>
+
+            <div class="dashboard-title">
+              Статистика
+            </div>
+
+            <div class="dashboard-subtitle">
+              Конструктор дашборду
+            </div>
+
+          </div>
+
+          <button id="buildDashboardBtn" class="dashboard-build-btn">
+            Сформувати
+          </button>
+
+        </div>
+
+        <div class="dashboard-period">
+
+          <label>
+            <span>Від</span>
+
+            <input
+              type="date"
+              id="dashboardFrom"
+            >
+          </label>
+
+          <label>
+            <span>До</span>
+
+            <input
+              type="date"
+              id="dashboardTo"
+            >
+          </label>
+
+        </div>
+
+        <div id="dashboardFilters" class="dashboard-filters"></div>
+
+        <button id="addDashboardFilterBtn" class="dashboard-add-btn">
+          Додати параметр
+        </button>
+
+        <div id="dashboardResult" class="dashboard-result"></div>
+
+      </section>
+
       <div id="toggleFormBtn" class="toggle-form-btn">
 
         <span id="toggleFormIcon">
