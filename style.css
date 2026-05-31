@@ -576,6 +576,10 @@ textarea:focus {
   grid-template-columns: 1fr 1fr 42px;
 }
 
+.dashboard-filter-row.single-filter {
+  grid-template-columns: 1fr 1fr;
+}
+
 .dashboard-remove-filter {
   width: 42px;
   min-height: 42px;
@@ -596,6 +600,10 @@ textarea:focus {
   color: #c8c8c8;
 
   cursor: default;
+}
+
+.dashboard-remove-filter.hidden {
+  display: none !important;
 }
 
 .dashboard-add-btn {
@@ -1331,10 +1339,6 @@ html {
   .dashboard-remove-filter {
     width: 34px;
     min-height: 38px;
-  }
-
-  .dashboard-remove-filter.hidden {
-    display: none !important;
   }
 
   .dashboard-filter-row.single-filter {
