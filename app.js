@@ -311,10 +311,7 @@ function stopVersionTimer() {
 
 async function checkShipmentsVersion() {
 
-  if (
-    sessionExpired ||
-    editingShipmentId
-  ) {
+  if (sessionExpired) {
     return;
   }
 
@@ -373,6 +370,25 @@ function formatDateTimeInput(value) {
   );
 
   return date.toISOString().slice(0, 16);
+}
+
+function formatDatePartInput(value) {
+
+  return formatDateTimeInput(value).slice(0, 10);
+}
+
+function formatTimePartInput(value) {
+
+  return formatDateTimeInput(value).slice(11, 16);
+}
+
+function combineDateTimeInput(dateValue, timeValue) {
+
+  if (!dateValue) {
+    return '';
+  }
+
+  return `${dateValue}T${timeValue || '00:00'}`;
 }
 
 function formatDateInput(date) {
@@ -1081,12 +1097,21 @@ function renderEditForm(item) {
         placeholder="Тип БПЛА"
       >
 
-      <input
-        type="datetime-local"
-        class="edit-sent-at"
-        value="${formatDateTimeInput(item.sentAtRaw)}"
-        aria-label="Дата відправки"
-      >
+      <div class="edit-date-time-row">
+        <input
+          type="date"
+          class="edit-sent-date"
+          value="${formatDatePartInput(item.sentAtRaw)}"
+          aria-label="Дата відправки"
+        >
+
+        <input
+          type="time"
+          class="edit-sent-time"
+          value="${formatTimePartInput(item.sentAtRaw)}"
+          aria-label="Час відправки"
+        >
+      </div>
 
       <input
         type="text"
@@ -1129,12 +1154,18 @@ function renderEditForm(item) {
 
 function getEditData(details) {
 
+  const sentDate =
+    details.querySelector('.edit-sent-date').value.trim();
+
+  const sentTime =
+    details.querySelector('.edit-sent-time').value.trim();
+
   return {
     product: details.querySelector('.edit-product').value.trim(),
     unit: details.querySelector('.edit-unit').value.trim(),
     destination: details.querySelector('.edit-destination').value.trim(),
     method: details.querySelector('.edit-method').value.trim(),
-    sentAt: details.querySelector('.edit-sent-at').value.trim(),
+    sentAt: combineDateTimeInput(sentDate, sentTime),
     crew: details.querySelector('.edit-crew').value.trim(),
     status: details.querySelector('.edit-status').value,
     comment: details.querySelector('.edit-comment').value.trim()
@@ -1148,7 +1179,10 @@ function getItemEditData(item) {
     unit: String(item.unit || '').trim(),
     destination: String(item.destination || '').trim(),
     method: String(item.method || '').trim(),
-    sentAt: formatDateTimeInput(item.sentAtRaw),
+    sentAt: combineDateTimeInput(
+      formatDatePartInput(item.sentAtRaw),
+      formatTimePartInput(item.sentAtRaw)
+    ),
     crew: String(item.crew || '').trim(),
     status: String(item.status || ''),
     comment: String(item.comment || '').trim()
