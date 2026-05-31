@@ -323,11 +323,54 @@ textarea:focus {
 
 .summary-item {
 
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
   white-space: nowrap;
 
   overflow: hidden;
 
   text-overflow: ellipsis;
+}
+
+.drone-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  width: 18px;
+  height: 18px;
+}
+
+.drone-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.drone-icon circle {
+  fill: #eef5f8;
+  stroke: #292929;
+  stroke-width: 3;
+}
+
+.drone-icon path {
+  fill: none;
+  stroke: #292929;
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.drone-icon rect {
+  fill: #ffe98d;
+  stroke: #292929;
+  stroke-width: 3;
+}
+
+.drone-icon circle:last-child {
+  fill: #ffd22e;
 }
 
 .card-summary {
