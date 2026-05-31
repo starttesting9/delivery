@@ -739,12 +739,24 @@ function addDashboardFilter(
 
 function getDashboardFilters() {
 
-  return getDashboardFilterRows()
+  const filters = getDashboardFilterRows()
     .map(row => ({
       key: row.querySelector('.dashboard-filter-type').value,
       value: row.querySelector('.dashboard-filter-value').value
     }))
     .filter(filter => filter.key && filter.value);
+
+  return filters.reduce((groups, filter) => {
+    if (!groups[filter.key]) {
+      groups[filter.key] = [];
+    }
+
+    if (!groups[filter.key].includes(filter.value)) {
+      groups[filter.key].push(filter.value);
+    }
+
+    return groups;
+  }, {});
 }
 
 function getShipmentDate(item) {
@@ -774,7 +786,7 @@ function filterDashboardShipments() {
 
   const fromDate = new Date(`${dashboardFrom.value}T00:00:00`);
   const toDate = new Date(`${dashboardTo.value}T23:59:59`);
-  const filters = getDashboardFilters();
+  const filterGroups = getDashboardFilters();
 
   if (
     isNaN(fromDate.getTime()) ||
@@ -790,8 +802,10 @@ function filterDashboardShipments() {
       return false;
     }
 
-    return filters.every(filter => {
-      return String(item[filter.key] || '') === filter.value;
+    return Object.keys(filterGroups).every(key => {
+      return filterGroups[key].includes(
+        String(item[key] || '')
+      );
     });
   });
 }
