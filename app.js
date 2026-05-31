@@ -69,6 +69,9 @@ const dashboardFilters =
 const dashboardResult =
   document.getElementById('dashboardResult');
 
+const dashboardGroupBy =
+  document.getElementById('dashboardGroupBy');
+
 const addDashboardFilterBtn =
   document.getElementById('addDashboardFilterBtn');
 
@@ -622,6 +625,17 @@ function getDashboardValues(key) {
   return [];
 }
 
+function getDashboardFilterLabel(key) {
+
+  const filter = DASHBOARD_FILTERS.find(item => {
+    return item.key === key;
+  });
+
+  return filter
+    ? filter.label
+    : key;
+}
+
 function getDashboardFilterRows() {
 
   return Array.from(
@@ -810,19 +824,37 @@ function filterDashboardShipments() {
   });
 }
 
-function getStatusBreakdown(items) {
+function getDashboardBreakdown(items) {
 
-  return SHIPMENT_STATUSES
-    .map(status => ({
-      label: status,
-      count: items.filter(item => item.status === status).length
+  const groupKey = dashboardGroupBy.value;
+  const knownValues = getDashboardValues(groupKey);
+  const counts = {};
+
+  items.forEach(item => {
+    const value = String(item[groupKey] || 'Не вказано');
+
+    counts[value] = (counts[value] || 0) + 1;
+  });
+
+  const orderedValues = [
+    ...knownValues,
+    ...Object.keys(counts).filter(value => {
+      return !knownValues.includes(value);
+    })
+  ];
+
+  return orderedValues
+    .map(value => ({
+      label: value,
+      count: counts[value] || 0
     }))
     .filter(item => item.count > 0);
 }
 
 function renderDashboardChart(items) {
 
-  const breakdown = getStatusBreakdown(items);
+  const breakdown = getDashboardBreakdown(items);
+  const groupKey = dashboardGroupBy.value;
   const total = items.length;
   const maxCount = Math.max(
     ...breakdown.map(item => item.count),
@@ -840,7 +872,11 @@ function renderDashboardChart(items) {
   return `
     <div class="dashboard-total">
       <span>${total}</span>
-      <small>заявок за період</small>
+      <small>
+        заявок, групування: ${escapeHtml(
+          getDashboardFilterLabel(groupKey).toLowerCase()
+        )}
+      </small>
     </div>
 
     <div class="dashboard-bars">
@@ -853,7 +889,11 @@ function renderDashboardChart(items) {
 
             <div class="dashboard-bar-track">
               <div
-                class="dashboard-bar-fill ${getStatusClass(item.label)}"
+                class="dashboard-bar-fill ${
+                  groupKey === 'status'
+                    ? getStatusClass(item.label)
+                    : ''
+                }"
                 style="width: ${(item.count / maxCount) * 100}%"
               ></div>
             </div>
@@ -905,6 +945,7 @@ function setupAdminDashboard() {
   dashboardTo.value = formatDateInput(today);
 
   dashboardFilters.innerHTML = '';
+  dashboardGroupBy.value = 'unit';
 
   addDashboardFilter(
     'status',
@@ -1413,6 +1454,8 @@ addDashboardFilterBtn.addEventListener('click', () => {
 });
 
 buildDashboardBtn.addEventListener('click', renderDashboard);
+
+dashboardGroupBy.addEventListener('change', renderDashboard);
 
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 
