@@ -613,6 +613,20 @@ textarea:focus {
   background: #f4f4f4;
 }
 
+.dashboard-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  margin-top: 12px;
+}
+
+.dashboard-group span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #777;
+}
+
 .dashboard-result {
   margin-top: 18px;
   padding-top: 16px;
