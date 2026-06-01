@@ -889,6 +889,10 @@ function getVisibleShipments() {
     return allShipments;
   }
 
+  if (activeListFilter.type === 'dashboardTotal') {
+    return filterDashboardShipments() || [];
+  }
+
   return getDashboardGroupItems(
     activeListFilter.groupKey,
     activeListFilter.groupValue
@@ -904,9 +908,27 @@ function renderVisibleShipments() {
 function applyDashboardListFilter(groupKey, groupValue) {
 
   activeListFilter = {
+    type: 'dashboardGroup',
     groupKey,
     groupValue,
     label: `${getDashboardFilterLabel(groupKey)}: ${groupValue}`
+  };
+
+  renderVisibleShipments();
+
+  document
+    .querySelector('.shipments-header')
+    .scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+}
+
+function applyDashboardTotalListFilter() {
+
+  activeListFilter = {
+    type: 'dashboardTotal',
+    label: 'увесь результат дашборду'
   };
 
   renderVisibleShipments();
@@ -971,7 +993,12 @@ function renderDashboardChart(items) {
   }
 
   return `
-    <div class="dashboard-total">
+    <div
+      class="dashboard-total"
+      tabindex="0"
+      role="button"
+      aria-label="Показати всі заявки з дашборду"
+    >
       <span>${total}</span>
       <small>
         заявок, групування: ${escapeHtml(
@@ -1031,6 +1058,26 @@ function renderDashboard() {
 
   dashboardResult.innerHTML =
     renderDashboardChart(filteredItems);
+
+  const totalButton =
+    dashboardResult.querySelector('.dashboard-total');
+
+  if (totalButton) {
+    totalButton.addEventListener(
+      'click',
+      applyDashboardTotalListFilter
+    );
+
+    totalButton.addEventListener('keydown', event => {
+      if (
+        event.key === 'Enter' ||
+        event.key === ' '
+      ) {
+        event.preventDefault();
+        applyDashboardTotalListFilter();
+      }
+    });
+  }
 
   dashboardResult
     .querySelectorAll('.dashboard-bar-row')
@@ -1210,19 +1257,27 @@ function renderEditForm(item) {
       >
 
       <div class="edit-date-time-row">
-        <input
-          type="date"
-          class="edit-sent-date"
-          value="${formatDatePartInput(item.sentAtRaw)}"
-          aria-label="Дата відправки"
-        >
+        <label class="edit-date-time-field">
+          <span>Дата відправки</span>
 
-        <input
-          type="time"
-          class="edit-sent-time"
-          value="${formatTimePartInput(item.sentAtRaw)}"
-          aria-label="Час відправки"
-        >
+          <input
+            type="date"
+            class="edit-sent-date"
+            value="${formatDatePartInput(item.sentAtRaw)}"
+            aria-label="Дата відправки"
+          >
+        </label>
+
+        <label class="edit-date-time-field">
+          <span>Час</span>
+
+          <input
+            type="time"
+            class="edit-sent-time"
+            value="${formatTimePartInput(item.sentAtRaw)}"
+            aria-label="Час відправки"
+          >
+        </label>
       </div>
 
       <input
