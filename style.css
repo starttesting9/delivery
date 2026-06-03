@@ -753,7 +753,7 @@ textarea:focus {
 .dashboard-bars {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .dashboard-bar-row {
@@ -762,9 +762,9 @@ textarea:focus {
   align-items: center;
   gap: 10px;
 
-  padding: 3px 0;
+  padding: 7px 8px;
 
-  border-radius: 8px;
+  border-radius: 10px;
 
   cursor: pointer;
 
@@ -1570,6 +1570,7 @@ html {
     grid-template-columns: 1fr 32px;
 
     gap: 7px;
+    padding: 7px 8px;
   }
 
   .dashboard-bar-row:hover,
