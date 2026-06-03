@@ -727,11 +727,14 @@ textarea:focus {
 
 .dashboard-total:hover,
 .dashboard-total:focus-visible {
-  background: #fafafa;
+  background: #f1f1f1;
 
   outline: none;
 
-  transform: translateX(2px);
+  box-shadow:
+    0 0 0 1px #e4e4e4 inset;
+
+  transform: translateX(3px);
 }
 
 .dashboard-total span {
@@ -772,11 +775,14 @@ textarea:focus {
 
 .dashboard-bar-row:hover,
 .dashboard-bar-row:focus-visible {
-  background: #fafafa;
+  background: #f1f1f1;
 
   outline: none;
 
-  transform: translateX(2px);
+  box-shadow:
+    0 0 0 1px #e4e4e4 inset;
+
+  transform: translateX(3px);
 }
 
 .dashboard-bar-label {
