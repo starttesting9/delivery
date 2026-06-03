@@ -4,6 +4,8 @@ let authToken = null;
 let currentUser = null;
 let sessionTimer = null;
 let sessionExpireTimer = null;
+let sessionCountdownTimer = null;
+let sessionExpiresAt = 0;
 let sessionExpired = false;
 let editingShipmentId = null;
 let versionTimer = null;
@@ -120,20 +122,36 @@ function startSessionTimer() {
 
   clearTimeout(sessionTimer);
   clearTimeout(sessionExpireTimer);
+  clearInterval(sessionCountdownTimer);
 
   sessionExpired = false;
+  sessionExpiresAt = Date.now() + 55 * 60 * 1000;
+
+  document
+    .getElementById('sessionWarning')
+    .classList.add('hidden');
+
+  updateSessionWarningText();
 
   sessionTimer = setTimeout(() => {
+
+    updateSessionWarningText();
 
     document
       .getElementById('sessionWarning')
       .classList.remove('hidden');
+
+    sessionCountdownTimer = setInterval(
+      updateSessionWarningText,
+      1000
+    );
 
   }, 50 * 60 * 1000);
 
   sessionExpireTimer = setTimeout(() => {
 
     sessionExpired = true;
+    clearInterval(sessionCountdownTimer);
     stopVersionTimer();
 
     document
@@ -141,6 +159,29 @@ function startSessionTimer() {
       .classList.remove('hidden');
 
   }, 55 * 60 * 1000);
+}
+
+function formatSessionCountdown(ms) {
+
+  const totalSeconds = Math.max(
+    0,
+    Math.ceil(ms / 1000)
+  );
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
+function updateSessionWarningText() {
+
+  const remaining =
+    sessionExpiresAt - Date.now();
+
+  document
+    .getElementById('sessionWarningText')
+    .innerText =
+      `Сесія завершиться через ${formatSessionCountdown(remaining)}`;
 }
 
 async function handleCredentialResponse(response) {
