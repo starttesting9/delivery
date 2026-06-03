@@ -146,7 +146,7 @@ function startSessionTimer() {
       1000
     );
 
-  }, 3 * 60 * 1000);
+  }, 50 * 60 * 1000);
 
   sessionExpireTimer = setTimeout(() => {
 
