@@ -1252,8 +1252,10 @@ function renderDetailsView(item) {
   
     ${item.comment
       ? `
-        <div>
-          <b>Коментар:</b> ${escapeHtml(item.comment)}
+        <div class="details-comment">
+          <b>Коментар:</b>
+
+          <div class="details-comment-text">${escapeHtml(item.comment)}</div>
         </div>
       `
       : ''
