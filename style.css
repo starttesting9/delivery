@@ -1586,7 +1586,7 @@ html {
   }
 
   .dashboard-bar-row {
-    grid-template-columns: minmax(82px, 100px) minmax(0, 1fr) 24px;
+    grid-template-columns: minmax(94px, 115px) minmax(0, 1fr) 24px;
 
     gap: 6px;
     padding: 5px 8px;
