@@ -394,6 +394,15 @@ function validateLength(value, min, max) {
          value.length <= max;
 }
 
+function getRequestErrorMessage(defaultMessage) {
+
+  if (!navigator.onLine) {
+    return 'Немає з’єднання з інтернетом';
+  }
+
+  return defaultMessage;
+}
+
 function escapeHtml(value) {
 
   return String(value || '')
@@ -627,7 +636,11 @@ async function createShipment() {
   } catch (e) {
     console.error(e);
 
-    showToast('Помилка створення доставки');
+    showToast(
+      getRequestErrorMessage(
+        'Помилка створення заявки'
+      )
+    );
 
   } finally {
     createBtn.classList.remove('loading');
@@ -1569,7 +1582,11 @@ async function saveShipmentEdit(item, details) {
   } catch (e) {
     console.error(e);
 
-    showToast('Помилка збереження заявки');
+    showToast(
+      getRequestErrorMessage(
+        'Помилка збереження заявки'
+      )
+    );
 
   } finally {
     saveBtn.classList.remove('loading');
