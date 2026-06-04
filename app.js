@@ -591,12 +591,10 @@ async function reloadAppData() {
   shipments.style.opacity = '0';
   shipmentsLoader.classList.remove('hidden');
 
-  document
-    .querySelector('.shipments-header')
-    .scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
+  shipmentsLoader.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center'
+  });
 
   try {
     const shouldInitializeDashboard =
