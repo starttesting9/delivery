@@ -267,6 +267,19 @@ textarea:focus {
   margin-top: 10px;
 }
 
+.details-comment {
+  margin-top: 4px;
+}
+
+.details-comment-text {
+  margin-top: 2px;
+
+  color: #444;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .details-edit-form {
   display: flex;
   flex-direction: column;
