@@ -1558,12 +1558,14 @@ html {
   }
 
   .dashboard-result {
-    margin-top: 14px;
-    padding-top: 12px;
+    margin-top: 10px;
+    padding-top: 9px;
   }
 
   .dashboard-total {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    padding-top: 1px;
+    padding-bottom: 1px;
   }
 
   .dashboard-total:hover,
@@ -1572,18 +1574,22 @@ html {
   }
 
   .dashboard-total span {
-    font-size: 30px;
+    font-size: 27px;
   }
 
   .dashboard-total small {
-    font-size: 12px;
+    font-size: 11px;
+  }
+
+  .dashboard-bars {
+    gap: 2px;
   }
 
   .dashboard-bar-row {
-    grid-template-columns: 1fr 32px;
+    grid-template-columns: minmax(82px, 100px) minmax(0, 1fr) 24px;
 
-    gap: 7px;
-    padding: 7px 8px;
+    gap: 6px;
+    padding: 5px 8px;
   }
 
   .dashboard-bar-row:hover,
@@ -1592,7 +1598,21 @@ html {
   }
 
   .dashboard-bar-label {
-    grid-column: 1 / -1;
+    grid-column: 1;
+
+    font-size: 12px;
+  }
+
+  .dashboard-bar-track {
+    grid-column: 2;
+
+    height: 7px;
+  }
+
+  .dashboard-bar-count {
+    grid-column: 3;
+
+    font-size: 12px;
   }
 
   .shipments-header {
