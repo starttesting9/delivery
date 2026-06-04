@@ -582,6 +582,15 @@ async function loadAppData(initializeDashboard = false) {
 
 async function reloadAppData() {
 
+  const shipments =
+    document.getElementById('shipments');
+
+  const shipmentsLoader =
+    document.getElementById('shipmentsLoader');
+
+  shipments.style.opacity = '0';
+  shipmentsLoader.classList.remove('hidden');
+
   try {
     const shouldInitializeDashboard =
       isAdmin() &&
@@ -596,6 +605,9 @@ async function reloadAppData() {
         'Не вдалося оновити дані'
       )
     );
+  } finally {
+    shipmentsLoader.classList.add('hidden');
+    shipments.style.opacity = '1';
   }
 }
 
