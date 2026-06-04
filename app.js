@@ -18,14 +18,13 @@ let shipmentOptions = {
 };
 
 const SHIPMENT_STATUSES = [
-  'Нова доставка',
-  'В процесі',
+  'Нова',
   'Виконано',
-  'Не виконано',
-  'Втрачено/знищено'
+  'Не виконано'
 ];
 
-const DEFAULT_SHIPMENT_STATUS = 'Нова доставка';
+const DEFAULT_SHIPMENT_STATUS = 'Нова';
+const DASHBOARD_ALL_VALUE = 'Всі';
 const API_TIMEOUT_MS = 30 * 1000;
 
 const DASHBOARD_FILTERS = [
@@ -770,6 +769,14 @@ function getDashboardValues(key) {
   return [];
 }
 
+function getDashboardFilterValues(key) {
+
+  return [
+    DASHBOARD_ALL_VALUE,
+    ...getDashboardValues(key)
+  ];
+}
+
 function getDashboardFilterLabel(key) {
 
   const filter = DASHBOARD_FILTERS.find(item => {
@@ -804,7 +811,7 @@ function buildFilterTypeOptions(selectedKey) {
 
 function buildFilterValueOptions(key, selectedValue) {
 
-  const values = getDashboardValues(key);
+  const values = getDashboardFilterValues(key);
 
   return values
     .map(value => `
@@ -837,7 +844,7 @@ function addDashboardFilter(
   value = DEFAULT_SHIPMENT_STATUS
 ) {
 
-  const values = getDashboardValues(key);
+  const values = getDashboardFilterValues(key);
   const selectedValue = values.includes(value)
     ? value
     : values[0] || '';
@@ -876,7 +883,7 @@ function addDashboardFilter(
 
   typeSelect.addEventListener('change', () => {
     const valuesForType =
-      getDashboardValues(typeSelect.value);
+      getDashboardFilterValues(typeSelect.value);
 
     valueSelect.innerHTML = buildFilterValueOptions(
       typeSelect.value,
@@ -906,7 +913,11 @@ function getDashboardFilters() {
       key: row.querySelector('.dashboard-filter-type').value,
       value: row.querySelector('.dashboard-filter-value').value
     }))
-    .filter(filter => filter.key && filter.value);
+    .filter(filter => {
+      return filter.key &&
+             filter.value &&
+             filter.value !== DASHBOARD_ALL_VALUE;
+    });
 
   return filters.reduce((groups, filter) => {
     if (!groups[filter.key]) {
@@ -1254,12 +1265,10 @@ function getStatusClass(status) {
     case 'Виконано':
       return 'status-success';
 
-    case 'В процесі':
-    case 'Нова доставка':
+    case 'Нова':
       return 'status-warning';
 
     case 'Не виконано':
-    case 'Втрачено/знищено':
       return 'status-danger';
 
     default:
