@@ -26,6 +26,7 @@ const SHIPMENT_STATUSES = [
 ];
 
 const DEFAULT_SHIPMENT_STATUS = 'Нова доставка';
+const API_TIMEOUT_MS = 30 * 1000;
 
 const DASHBOARD_FILTERS = [
   {
@@ -223,14 +224,21 @@ async function handleCredentialResponse(response) {
   currentUser = result.data.user;
 
   startSessionTimer();
-  startVersionTimer();
 
   document.getElementById('userInfo')
     .innerText = currentUser.name;
 
-  await loadShipmentOptions();
-  setupAdminDashboard();
-  await loadShipments();
+  try {
+    await loadAppData(true);
+  } catch (e) {
+    console.error(e);
+
+    showToast(
+      getRequestErrorMessage(
+        'Не вдалося завантажити дані. Натисніть Оновити'
+      )
+    );
+  }
 
   document.getElementById('loader')
     .classList.add('hidden');
@@ -255,10 +263,22 @@ async function api(
     })
   );
 
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    body: formData
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(
+    () => controller.abort(),
+    API_TIMEOUT_MS
+  );
+  let response;
+
+  try {
+    response = await fetch(API_URL, {
+      method: 'POST',
+      body: formData,
+      signal: controller.signal
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 
   const result = await response.json();
 
@@ -537,8 +557,7 @@ async function loadShipmentOptions() {
   const result = await api('getShipmentOptions');
 
   if (!result.success) {
-    showToast(result.error);
-    return;
+    throw new Error(result.error);
   }
 
   shipmentOptions = {
@@ -547,6 +566,37 @@ async function loadShipmentOptions() {
   };
 
   populateCreateOptions();
+}
+
+async function loadAppData(initializeDashboard = false) {
+
+  await loadShipmentOptions();
+
+  if (initializeDashboard) {
+    setupAdminDashboard();
+  }
+
+  await loadShipments();
+  startVersionTimer();
+}
+
+async function reloadAppData() {
+
+  try {
+    const shouldInitializeDashboard =
+      isAdmin() &&
+      !dashboardFilters.children.length;
+
+    await loadAppData(shouldInitializeDashboard);
+  } catch (e) {
+    console.error(e);
+
+    showToast(
+      getRequestErrorMessage(
+        'Не вдалося оновити дані'
+      )
+    );
+  }
 }
 
 async function createShipment() {
@@ -659,36 +709,31 @@ async function loadShipments() {
     setTimeout(resolve, 200)
   );
 
-  shipments.innerHTML = '';
-
   shipmentsLoader.classList.remove('hidden');
 
-  const result = await api('getShipments');
+  try {
+    const result = await api('getShipments');
 
-  shipmentsLoader.classList.add('hidden');
+    if (!result.success) {
+      throw new Error(result.error);
+    }
 
-  if (!result.success) {
+    const items = result.data || [];
 
+    allShipments = items;
+
+    lastKnownShipmentsVersion =
+      getShipmentsVersion(items);
+
+    setUpdateNotice(false);
+
+    renderVisibleShipments();
+    renderDashboard();
+
+  } finally {
+    shipmentsLoader.classList.add('hidden');
     shipments.style.opacity = '1';
-  
-    showToast(result.error);
-  
-    return;
   }
-  
-  const items = result.data || [];
-
-  allShipments = items;
-
-  lastKnownShipmentsVersion =
-    getShipmentsVersion(items);
-
-  setUpdateNotice(false);
-
-  renderVisibleShipments();
-  renderDashboard();
-
-  shipments.style.opacity = '1';
 }
 
 function getDashboardValues(key) {
@@ -1747,7 +1792,7 @@ function renderShipments(items) {
 document.getElementById('createBtn')
   .addEventListener('click', createShipment);
 
-loadBtn.addEventListener('click', loadShipments);
+loadBtn.addEventListener('click', reloadAppData);
 
 addDashboardFilterBtn.addEventListener('click', () => {
   addDashboardFilter('status', DEFAULT_SHIPMENT_STATUS);
