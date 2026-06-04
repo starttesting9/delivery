@@ -1250,11 +1250,11 @@ function setupAdminDashboard() {
   dashboardTo.value = formatDateInput(today);
 
   dashboardFilters.innerHTML = '';
-  dashboardGroupBy.value = 'unit';
+  dashboardGroupBy.value = 'status';
 
   addDashboardFilter(
     'status',
-    DEFAULT_SHIPMENT_STATUS
+    DASHBOARD_ALL_VALUE
   );
 }
 
