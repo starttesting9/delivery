@@ -1457,6 +1457,7 @@ html {
   textarea,
   select {
     font-size: 16px;
+    line-height: 1.2;
   }
 
   .summary-item {
@@ -1471,26 +1472,51 @@ html {
     line-height: 1.45;
   }
 
-  .edit-date-time-row {
-    grid-template-columns: 1fr 0.82fr;
+  .form-open {
+    padding: 12px;
+  }
+
+  .hidden-form {
+    padding:
+      0 12px;
+  }
+
+  .form {
+    gap: 8px;
+  }
+
+  .form input,
+  .form textarea,
+  .form select,
+  .details-edit-form input,
+  .details-edit-form textarea,
+  .details-edit-form select,
+  .admin-dashboard input,
+  .admin-dashboard select {
+    min-height: 40px;
+    padding: 8px 10px;
+
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .form select,
+  .details-edit-form select,
+  .admin-dashboard select {
+    padding-right: 34px;
+  }
+
+  .form textarea,
+  .details-edit-form textarea {
+    min-height: 68px;
   }
 
   .details-edit-form {
     gap: 7px;
   }
 
-  .details-edit-form input,
-  .details-edit-form textarea,
-  .details-edit-form select {
-    min-height: 44px;
-    padding: 9px 10px;
-
-    font-size: 15px;
-    line-height: 1.25;
-  }
-
-  .details-edit-form textarea {
-    min-height: 88px;
+  .edit-date-time-row {
+    grid-template-columns: 1fr 0.82fr;
   }
 
   .edit-date-time-field {
