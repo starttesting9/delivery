@@ -1473,12 +1473,12 @@ html {
   }
 
   .form-open {
-    padding: 12px;
+    padding: 16px;
   }
 
   .hidden-form {
     padding:
-      0 12px;
+      0 16px;
   }
 
   .form {
