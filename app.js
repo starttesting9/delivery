@@ -78,6 +78,9 @@ const dashboardGroupBy =
 const addDashboardFilterBtn =
   document.getElementById('addDashboardFilterBtn');
 
+const resetDashboardBtn =
+  document.getElementById('resetDashboardBtn');
+
 const buildDashboardBtn =
   document.getElementById('buildDashboardBtn');
 
@@ -839,6 +842,76 @@ function syncDashboardRemoveButtons() {
   });
 }
 
+function getDashboardDefaultState() {
+
+  const today = new Date();
+  const monthStart = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    1
+  );
+
+  return {
+    from: formatDateInput(monthStart),
+    to: formatDateInput(today),
+    groupBy: 'status',
+    filters: [
+      {
+        key: 'status',
+        value: DASHBOARD_ALL_VALUE
+      }
+    ]
+  };
+}
+
+function getDashboardRawFilters() {
+
+  return getDashboardFilterRows()
+    .map(row => ({
+      key: row.querySelector('.dashboard-filter-type').value,
+      value: row.querySelector('.dashboard-filter-value').value
+    }));
+}
+
+function isDashboardDefaultState() {
+
+  const defaultState = getDashboardDefaultState();
+  const filters = getDashboardRawFilters();
+
+  return dashboardFrom.value === defaultState.from &&
+         dashboardTo.value === defaultState.to &&
+         dashboardGroupBy.value === defaultState.groupBy &&
+         filters.length === defaultState.filters.length &&
+         filters.every((filter, index) => {
+           const defaultFilter = defaultState.filters[index];
+
+           return filter.key === defaultFilter.key &&
+                  filter.value === defaultFilter.value;
+         });
+}
+
+function syncDashboardResetButton() {
+
+  resetDashboardBtn.disabled = isDashboardDefaultState();
+}
+
+function applyDashboardDefaults() {
+
+  const defaultState = getDashboardDefaultState();
+
+  dashboardFrom.value = defaultState.from;
+  dashboardTo.value = defaultState.to;
+  dashboardGroupBy.value = defaultState.groupBy;
+
+  dashboardFilters.innerHTML = '';
+
+  defaultState.filters.forEach(filter => {
+    addDashboardFilter(filter.key, filter.value);
+  });
+
+  syncDashboardResetButton();
+}
+
 function addDashboardFilter(
   key = 'status',
   value = DEFAULT_SHIPMENT_STATUS
@@ -889,7 +962,11 @@ function addDashboardFilter(
       typeSelect.value,
       valuesForType[0] || ''
     );
+
+    syncDashboardResetButton();
   });
+
+  valueSelect.addEventListener('change', syncDashboardResetButton);
 
   row
     .querySelector('.dashboard-remove-filter')
@@ -900,10 +977,12 @@ function addDashboardFilter(
 
       row.remove();
       syncDashboardRemoveButtons();
+      syncDashboardResetButton();
     });
 
   dashboardFilters.appendChild(row);
   syncDashboardRemoveButtons();
+  syncDashboardResetButton();
 }
 
 function getDashboardFilters() {
@@ -1237,25 +1316,9 @@ function setupAdminDashboard() {
     return;
   }
 
-  const today = new Date();
-  const monthStart = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    1
-  );
-
   adminDashboard.classList.remove('hidden');
 
-  dashboardFrom.value = formatDateInput(monthStart);
-  dashboardTo.value = formatDateInput(today);
-
-  dashboardFilters.innerHTML = '';
-  dashboardGroupBy.value = 'status';
-
-  addDashboardFilter(
-    'status',
-    DASHBOARD_ALL_VALUE
-  );
+  applyDashboardDefaults();
 }
 
 function getStatusClass(status) {
@@ -1836,9 +1899,25 @@ addDashboardFilterBtn.addEventListener('click', () => {
   addDashboardFilter('status', DEFAULT_SHIPMENT_STATUS);
 });
 
+resetDashboardBtn.addEventListener('click', () => {
+  if (resetDashboardBtn.disabled) {
+    return;
+  }
+
+  applyDashboardDefaults();
+  renderDashboard();
+});
+
 buildDashboardBtn.addEventListener('click', renderDashboard);
 
-dashboardGroupBy.addEventListener('change', renderDashboard);
+dashboardFrom.addEventListener('change', syncDashboardResetButton);
+
+dashboardTo.addEventListener('change', syncDashboardResetButton);
+
+dashboardGroupBy.addEventListener('change', () => {
+  syncDashboardResetButton();
+  renderDashboard();
+});
 
 clearListFilterBtn.addEventListener('click', clearDashboardListFilter);
 
