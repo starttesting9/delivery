@@ -1749,8 +1749,6 @@ function renderShipments(items) {
             ${escapeHtml(item.destination)}
           </div>
       
-          <span class="card-dot">•</span>
-      
           <div class="summary-item card-status-text">
             ${escapeHtml(item.status)}
           </div>
