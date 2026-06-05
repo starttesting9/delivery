@@ -626,15 +626,23 @@ textarea:focus {
 
 .dashboard-build-btn,
 .dashboard-add-btn,
+.dashboard-reset-btn,
 .dashboard-remove-filter {
   font-weight: 600;
+}
+
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.35fr;
+  gap: 8px;
+
+  margin-top: 10px;
 }
 
 .dashboard-build-btn {
   width: 100%;
   min-height: 38px;
   padding: 8px 14px;
-  margin-top: 8px;
 
   color: white;
 
@@ -645,6 +653,36 @@ textarea:focus {
 
 .dashboard-build-btn:hover {
   background: #222;
+}
+
+.dashboard-reset-btn {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+
+  color: #555;
+
+  background: #fafafa;
+}
+
+.dashboard-reset-btn:hover {
+  color: #222;
+
+  background: #f4f4f4;
+}
+
+.dashboard-reset-btn:disabled {
+  color: #c3c3c3;
+
+  background: #fbfbfb;
+
+  cursor: default;
+}
+
+.dashboard-reset-btn:disabled:hover {
+  color: #c3c3c3;
+
+  background: #fbfbfb;
 }
 
 .dashboard-period,
@@ -712,9 +750,7 @@ textarea:focus {
 
 .dashboard-add-btn {
   width: 100%;
-  min-height: 40px;
-
-  margin-top: 10px;
+  min-height: 38px;
 
   color: #444;
 
@@ -1566,8 +1602,15 @@ html {
   }
 
   .dashboard-build-btn {
+    grid-column: 1 / -1;
     min-height: 34px;
     padding: 7px 12px;
+  }
+
+  .dashboard-actions {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
     margin-top: 8px;
   }
 
@@ -1606,8 +1649,11 @@ html {
 
   .dashboard-add-btn {
     min-height: 36px;
+  }
 
-    margin-top: 8px;
+  .dashboard-reset-btn {
+    min-height: 36px;
+    padding: 7px 12px;
   }
 
   .dashboard-group {
