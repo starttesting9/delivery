@@ -186,17 +186,17 @@ button {
 }
 
 .card-status-done {
-  background: #f3faf5;
+  background: #eef8f1;
 
   box-shadow:
-    0 0 0 1px rgba(79, 138, 91, 0.10) inset;
+    0 0 0 1px rgba(79, 138, 91, 0.16) inset;
 }
 
 .card-status-failed {
-  background: #fff5f5;
+  background: #fff0f0;
 
   box-shadow:
-    0 0 0 1px rgba(184, 92, 92, 0.10) inset;
+    0 0 0 1px rgba(184, 92, 92, 0.16) inset;
 }
 
 .card:hover {
@@ -435,6 +435,7 @@ textarea:focus {
   display: flex;
 
   align-items: center;
+  justify-content: space-between;
 
   flex-wrap: nowrap;
 
@@ -449,10 +450,6 @@ textarea:focus {
   line-height: 1.45;
 
   color: #222;
-}
-
-.card-dot {
-  color: #d7d7d7;
 }
 
 .card-date {
