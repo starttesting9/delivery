@@ -857,15 +857,15 @@ textarea:focus {
 }
 
 .dashboard-bar-fill.status-success {
-  background: #4f8a5b;
+  background: #6fb982;
 }
 
 .dashboard-bar-fill.status-warning {
-  background: #b58b3a;
+  background: #7f7f7f;
 }
 
 .dashboard-bar-fill.status-danger {
-  background: #b85c5c;
+  background: #d47a7a;
 }
 
 .dashboard-bar-count {
