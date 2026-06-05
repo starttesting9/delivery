@@ -185,6 +185,20 @@ button {
     box-shadow 0.2s;
 }
 
+.card-status-done {
+  background: #f3faf5;
+
+  box-shadow:
+    0 0 0 1px rgba(79, 138, 91, 0.10) inset;
+}
+
+.card-status-failed {
+  background: #fff5f5;
+
+  box-shadow:
+    0 0 0 1px rgba(184, 92, 92, 0.10) inset;
+}
+
 .card:hover {
   transform: translateY(-2px);
 }
@@ -358,6 +372,23 @@ textarea:focus {
   overflow: hidden;
 
   text-overflow: ellipsis;
+}
+
+.card-destination {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.card-status-text {
+  flex: 0 0 auto;
+
+  max-width: none;
+
+  overflow: visible;
+
+  color: #222;
+
+  text-overflow: clip;
 }
 
 .drone-icon {
@@ -1432,7 +1463,11 @@ html {
   }
 
   .summary-item {
-    max-width: 100px;
+    max-width: none;
+  }
+
+  .card-destination {
+    min-width: 0;
   }
 
   .card {
