@@ -1276,6 +1276,21 @@ function getStatusClass(status) {
   }
 }
 
+function getCardStatusClass(status) {
+
+  switch (status) {
+
+    case 'Виконано':
+      return 'card-status-done';
+
+    case 'Не виконано':
+      return 'card-status-failed';
+
+    default:
+      return '';
+  }
+}
+
 function renderDetailsView(item) {
 
   const editButton = canEditShipment(item)
@@ -1325,7 +1340,7 @@ function renderDetailsView(item) {
     <div>
       <b>Статус:</b>
     
-      <span class="${getStatusClass(item.status)}">
+      <span>
         ${escapeHtml(item.status)}
       </span>
     </div>
@@ -1702,7 +1717,12 @@ function renderShipments(items) {
 
     const div = document.createElement('div');
 
-    div.className = 'card';
+    div.className = [
+      'card',
+      getCardStatusClass(item.status)
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     div.style.animationDelay =
       `${index * 70}ms`;
@@ -1713,7 +1733,7 @@ function renderShipments(items) {
 
         <div class="card-summary">
       
-          <div class="summary-item">
+          <div class="summary-item card-destination">
             <span class="drone-icon" aria-hidden="true">
               <svg viewBox="0 0 64 64" focusable="false">
                 <circle cx="16" cy="16" r="12"></circle>
@@ -1726,18 +1746,12 @@ function renderShipments(items) {
                 <circle cx="32" cy="32" r="2.8"></circle>
               </svg>
             </span>
-            ${escapeHtml(item.product)}
-          </div>
-      
-          <span class="card-dot">•</span>
-      
-          <div class="summary-item">
             ${escapeHtml(item.destination)}
           </div>
       
           <span class="card-dot">•</span>
       
-          <div class="summary-item ${getStatusClass(item.status)}">
+          <div class="summary-item card-status-text">
             ${escapeHtml(item.status)}
           </div>
       
