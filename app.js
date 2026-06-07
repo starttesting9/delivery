@@ -901,6 +901,34 @@ function syncDashboardResetButton() {
   resetDashboardBtn.disabled = isDashboardDefaultState();
 }
 
+function canShowDashboardZeroValues() {
+
+  const filters = getDashboardRawFilters();
+
+  return filters.length > 0 &&
+         filters.every(filter => {
+           return filter.value === DASHBOARD_ALL_VALUE;
+         });
+}
+
+function syncDashboardZeroToggle() {
+
+  const canShowZeroValues =
+    canShowDashboardZeroValues();
+
+  dashboardShowZeroValues.disabled = !canShowZeroValues;
+
+  if (!canShowZeroValues) {
+    dashboardShowZeroValues.checked = false;
+  }
+}
+
+function syncDashboardControls() {
+
+  syncDashboardZeroToggle();
+  syncDashboardResetButton();
+}
+
 function applyDashboardDefaults() {
 
   const defaultState = getDashboardDefaultState();
@@ -917,7 +945,7 @@ function applyDashboardDefaults() {
     addDashboardFilter(filter.key, filter.value);
   });
 
-  syncDashboardResetButton();
+  syncDashboardControls();
 }
 
 function addDashboardFilter(
@@ -971,10 +999,14 @@ function addDashboardFilter(
       valuesForType[0] || ''
     );
 
-    syncDashboardResetButton();
+    syncDashboardControls();
+    renderDashboard();
   });
 
-  valueSelect.addEventListener('change', syncDashboardResetButton);
+  valueSelect.addEventListener('change', () => {
+    syncDashboardControls();
+    renderDashboard();
+  });
 
   row
     .querySelector('.dashboard-remove-filter')
@@ -985,12 +1017,13 @@ function addDashboardFilter(
 
       row.remove();
       syncDashboardRemoveButtons();
-      syncDashboardResetButton();
+      syncDashboardControls();
+      renderDashboard();
     });
 
   dashboardFilters.appendChild(row);
   syncDashboardRemoveButtons();
-  syncDashboardResetButton();
+  syncDashboardControls();
 }
 
 function getDashboardFilters() {
@@ -1198,12 +1231,20 @@ function renderDashboardChart(items) {
   const breakdown = getDashboardBreakdown(items);
   const groupKey = dashboardGroupBy.value;
   const total = items.length;
+  const shouldShowZeroValues =
+    dashboardShowZeroValues.checked;
+  const shouldScrollBars =
+    shouldShowZeroValues &&
+    breakdown.length > 12;
   const maxCount = Math.max(
     ...breakdown.map(item => item.count),
     1
   );
 
-  if (!total) {
+  if (
+    !total &&
+    !shouldShowZeroValues
+  ) {
     return `
       <div class="dashboard-empty">
         За вибраними параметрами заявок немає
@@ -1226,7 +1267,7 @@ function renderDashboardChart(items) {
       </small>
     </div>
 
-    <div class="dashboard-bars">
+    <div class="dashboard-bars ${shouldScrollBars ? 'is-scrollable' : ''}">
       ${breakdown
         .map(item => `
           <div
@@ -1910,6 +1951,7 @@ loadBtn.addEventListener('click', reloadAppData);
 
 addDashboardFilterBtn.addEventListener('click', () => {
   addDashboardFilter('status', DEFAULT_SHIPMENT_STATUS);
+  renderDashboard();
 });
 
 resetDashboardBtn.addEventListener('click', () => {
@@ -1923,17 +1965,17 @@ resetDashboardBtn.addEventListener('click', () => {
 
 buildDashboardBtn.addEventListener('click', renderDashboard);
 
-dashboardFrom.addEventListener('change', syncDashboardResetButton);
+dashboardFrom.addEventListener('change', syncDashboardControls);
 
-dashboardTo.addEventListener('change', syncDashboardResetButton);
+dashboardTo.addEventListener('change', syncDashboardControls);
 
 dashboardGroupBy.addEventListener('change', () => {
-  syncDashboardResetButton();
+  syncDashboardControls();
   renderDashboard();
 });
 
 dashboardShowZeroValues.addEventListener('change', () => {
-  syncDashboardResetButton();
+  syncDashboardControls();
   renderDashboard();
 });
 
