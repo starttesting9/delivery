@@ -17,28 +17,28 @@ let shipmentOptions = {
   destinations: []
 };
 
-const DEFAULT_UI_LABELS = {
-  product: 'Назва',
-  unit: 'Група',
-  destination: 'Напрямок',
-  method: 'Додатковий тип',
-  crew: 'Відповідальний',
-  createRequest: 'Створити запис',
-  shipmentsTitle: 'Список записів',
-  chooseUnit: 'Оберіть групу',
-  chooseDestination: 'Оберіть напрямок',
-  detailsProduct: 'Тип',
-  productRequired: 'Вкажіть назву',
-  productLength: 'Назва повинна містити від 2 до 80 символів',
-  unitRequired: 'Вкажіть групу',
-  unitLength: 'Група повинна містити від 2 до 30 символів',
-  destinationRequired: 'Вкажіть напрямок',
-  destinationLength: 'Напрямок повинен містити від 2 до 180 символів',
-  methodLength: 'Додатковий тип повинен містити від 2 до 40 символів',
-  crewLength: 'Відповідальний повинен містити від 2 до 40 символів'
-};
+const REQUIRED_UI_LABEL_KEYS = [
+  'product',
+  'unit',
+  'destination',
+  'method',
+  'crew',
+  'createRequest',
+  'shipmentsTitle',
+  'chooseUnit',
+  'chooseDestination',
+  'detailsProduct',
+  'productRequired',
+  'productLength',
+  'unitRequired',
+  'unitLength',
+  'destinationRequired',
+  'destinationLength',
+  'methodLength',
+  'crewLength'
+];
 
-let uiLabels = { ...DEFAULT_UI_LABELS };
+let uiLabels = null;
 
 const SHIPMENT_STATUSES = [
   'Нова',
@@ -137,7 +137,9 @@ toggleFormBtn.addEventListener('click', () => {
     shipmentForm.classList.remove('form-open');
 
     toggleFormText.innerText =
-      uiLabels.createRequest;
+      uiLabels
+        ? uiLabels.createRequest
+        : 'Create';
 
     toggleFormIcon.style.transform =
       'rotate(0deg)';
@@ -562,6 +564,15 @@ function populateSelect(select, options, placeholder) {
   });
 }
 
+function validateUiLabels(labels) {
+
+  return Boolean(labels) &&
+    REQUIRED_UI_LABEL_KEYS.every(key => {
+      return typeof labels[key] === 'string' &&
+             labels[key].trim();
+    });
+}
+
 function applyUiLabels() {
 
   document.getElementById('product').placeholder =
@@ -623,10 +634,11 @@ async function loadShipmentOptions() {
     destinations: result.data.destinations || []
   };
 
-  uiLabels = {
-    ...DEFAULT_UI_LABELS,
-    ...(result.data.labels || {})
-  };
+  if (!validateUiLabels(result.data.labels)) {
+    throw new Error('UI labels config is missing');
+  }
+
+  uiLabels = result.data.labels;
 
   applyUiLabels();
   populateCreateOptions();
