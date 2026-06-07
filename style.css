@@ -581,7 +581,7 @@ textarea:focus {
 }
 
 .topbar {
-  margin-bottom: 30px;
+  margin-bottom: 16px;
 }
 
 #userInfo {
@@ -616,8 +616,11 @@ textarea:focus {
 }
 
 .dashboard-subtitle {
-  margin-top: 12px;
+  margin-top: 14px;
   margin-bottom: 8px;
+  padding-top: 11px;
+
+  border-top: 1px solid #f0f0f0;
 
   font-size: 13px;
   font-weight: 500;
@@ -644,15 +647,15 @@ textarea:focus {
   min-height: 38px;
   padding: 8px 14px;
 
-  color: white;
+  color: #444;
 
-  background: #111;
+  background: white;
 
-  border-color: #111;
+  border-color: #e8e8e8;
 }
 
 .dashboard-build-btn:hover {
-  background: #222;
+  background: #fafafa;
 }
 
 .dashboard-reset-btn {
