@@ -75,6 +75,9 @@ const dashboardResult =
 const dashboardGroupBy =
   document.getElementById('dashboardGroupBy');
 
+const dashboardShowZeroValues =
+  document.getElementById('dashboardShowZeroValues');
+
 const addDashboardFilterBtn =
   document.getElementById('addDashboardFilterBtn');
 
@@ -855,6 +858,7 @@ function getDashboardDefaultState() {
     from: formatDateInput(monthStart),
     to: formatDateInput(today),
     groupBy: 'status',
+    showZeroValues: false,
     filters: [
       {
         key: 'status',
@@ -881,6 +885,8 @@ function isDashboardDefaultState() {
   return dashboardFrom.value === defaultState.from &&
          dashboardTo.value === defaultState.to &&
          dashboardGroupBy.value === defaultState.groupBy &&
+         dashboardShowZeroValues.checked ===
+           defaultState.showZeroValues &&
          filters.length === defaultState.filters.length &&
          filters.every((filter, index) => {
            const defaultFilter = defaultState.filters[index];
@@ -902,6 +908,8 @@ function applyDashboardDefaults() {
   dashboardFrom.value = defaultState.from;
   dashboardTo.value = defaultState.to;
   dashboardGroupBy.value = defaultState.groupBy;
+  dashboardShowZeroValues.checked =
+    defaultState.showZeroValues;
 
   dashboardFilters.innerHTML = '';
 
@@ -1158,6 +1166,8 @@ function getDashboardBreakdown(items) {
   const groupKey = dashboardGroupBy.value;
   const knownValues = getDashboardValues(groupKey);
   const counts = {};
+  const shouldShowZeroValues =
+    dashboardShowZeroValues.checked;
 
   items.forEach(item => {
     const value = String(item[groupKey] || 'Не вказано');
@@ -1177,7 +1187,10 @@ function getDashboardBreakdown(items) {
       label: value,
       count: counts[value] || 0
     }))
-    .filter(item => item.count > 0);
+    .filter(item => {
+      return shouldShowZeroValues ||
+             item.count > 0;
+    });
 }
 
 function renderDashboardChart(items) {
@@ -1234,7 +1247,7 @@ function renderDashboardChart(items) {
                   groupKey === 'status'
                     ? getStatusClass(item.label)
                     : ''
-                }"
+                } ${item.count ? '' : 'is-zero'}"
                 style="width: ${(item.count / maxCount) * 100}%"
               ></div>
             </div>
@@ -1915,6 +1928,11 @@ dashboardFrom.addEventListener('change', syncDashboardResetButton);
 dashboardTo.addEventListener('change', syncDashboardResetButton);
 
 dashboardGroupBy.addEventListener('change', () => {
+  syncDashboardResetButton();
+  renderDashboard();
+});
+
+dashboardShowZeroValues.addEventListener('change', () => {
   syncDashboardResetButton();
   renderDashboard();
 });
