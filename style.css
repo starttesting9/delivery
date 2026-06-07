@@ -395,7 +395,7 @@ textarea:focus {
   text-overflow: clip;
 }
 
-.drone-icon {
+.item-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -406,32 +406,22 @@ textarea:focus {
   height: 18px;
 }
 
-.drone-icon svg {
+.item-icon svg {
   width: 100%;
   height: 100%;
 }
 
-.drone-icon circle {
-  fill: #eef5f8;
+.item-icon rect {
+  fill: #f7f7f7;
   stroke: #292929;
-  stroke-width: 3;
-}
-
-.drone-icon path {
-  fill: none;
-  stroke: #292929;
-  stroke-linecap: round;
   stroke-width: 4;
 }
 
-.drone-icon rect {
-  fill: #ffe98d;
+.item-icon path {
+  fill: none;
   stroke: #292929;
-  stroke-width: 3;
-}
-
-.drone-icon circle:last-child {
-  fill: #ffd22e;
+  stroke-linecap: round;
+  stroke-width: 3.5;
 }
 
 .card-summary {
@@ -931,7 +921,7 @@ textarea:focus {
 }
 
 .dashboard-bars.is-scrollable {
-  max-height: 300px;
+  max-height: 350px;
   padding-right: 3px;
 
   overflow-y: auto;
@@ -1804,7 +1794,7 @@ html {
   }
 
   .dashboard-bars.is-scrollable {
-    max-height: 220px;
+    max-height: 270px;
   }
 
   .dashboard-result {
