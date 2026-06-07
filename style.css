@@ -690,7 +690,7 @@ textarea:focus {
 .dashboard-period,
 .dashboard-filter-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
 }
 
@@ -702,6 +702,26 @@ textarea:focus {
   display: flex;
   flex-direction: column;
   gap: 6px;
+
+  min-width: 0;
+}
+
+.dashboard-period input[type="date"] {
+  display: block;
+
+  width: 100%;
+  min-width: 0;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  text-align: left;
+}
+
+.dashboard-period input[type="date"]::-webkit-date-and-time-value {
+  min-width: 0;
+
+  text-align: left;
 }
 
 .dashboard-period span {
@@ -1742,7 +1762,7 @@ html {
   }
 
   .dashboard-period {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 8px;
 
     margin-bottom: 8px;
