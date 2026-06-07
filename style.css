@@ -931,10 +931,30 @@ textarea:focus {
 }
 
 .dashboard-bars.is-scrollable {
-  max-height: 420px;
+  max-height: 340px;
   padding-right: 4px;
 
   overflow-y: auto;
+  scrollbar-color: #d5d5d5 transparent;
+  scrollbar-width: thin;
+}
+
+.dashboard-bars.is-scrollable::-webkit-scrollbar {
+  width: 5px;
+}
+
+.dashboard-bars.is-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard-bars.is-scrollable::-webkit-scrollbar-thumb {
+  background: #d5d5d5;
+
+  border-radius: 999px;
+}
+
+.dashboard-bars.is-scrollable::-webkit-scrollbar-thumb:hover {
+  background: #c7c7c7;
 }
 
 .dashboard-bar-row {
@@ -1784,7 +1804,7 @@ html {
   }
 
   .dashboard-bars.is-scrollable {
-    max-height: 320px;
+    max-height: 260px;
   }
 
   .dashboard-result {
