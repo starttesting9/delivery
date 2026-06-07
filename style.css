@@ -931,8 +931,8 @@ textarea:focus {
 }
 
 .dashboard-bars.is-scrollable {
-  max-height: 340px;
-  padding-right: 4px;
+  max-height: 300px;
+  padding-right: 3px;
 
   overflow-y: auto;
   scrollbar-color: #d5d5d5 transparent;
@@ -940,7 +940,7 @@ textarea:focus {
 }
 
 .dashboard-bars.is-scrollable::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
 }
 
 .dashboard-bars.is-scrollable::-webkit-scrollbar-track {
@@ -1804,7 +1804,7 @@ html {
   }
 
   .dashboard-bars.is-scrollable {
-    max-height: 260px;
+    max-height: 220px;
   }
 
   .dashboard-result {
