@@ -17,6 +17,29 @@ let shipmentOptions = {
   destinations: []
 };
 
+const DEFAULT_UI_LABELS = {
+  product: 'Назва',
+  unit: 'Група',
+  destination: 'Напрямок',
+  method: 'Додатковий тип',
+  crew: 'Відповідальний',
+  createRequest: 'Створити запис',
+  shipmentsTitle: 'Список записів',
+  chooseUnit: 'Оберіть групу',
+  chooseDestination: 'Оберіть напрямок',
+  detailsProduct: 'Тип',
+  productRequired: 'Вкажіть назву',
+  productLength: 'Назва повинна містити від 2 до 80 символів',
+  unitRequired: 'Вкажіть групу',
+  unitLength: 'Група повинна містити від 2 до 30 символів',
+  destinationRequired: 'Вкажіть напрямок',
+  destinationLength: 'Напрямок повинен містити від 2 до 180 символів',
+  methodLength: 'Додатковий тип повинен містити від 2 до 40 символів',
+  crewLength: 'Відповідальний повинен містити від 2 до 40 символів'
+};
+
+let uiLabels = { ...DEFAULT_UI_LABELS };
+
 const SHIPMENT_STATUSES = [
   'Нова',
   'Виконано',
@@ -29,16 +52,13 @@ const API_TIMEOUT_MS = 30 * 1000;
 
 const DASHBOARD_FILTERS = [
   {
-    key: 'status',
-    label: 'Статус'
+    key: 'status'
   },
   {
-    key: 'unit',
-    label: 'Підрозділ'
+    key: 'unit'
   },
   {
-    key: 'destination',
-    label: 'Куди'
+    key: 'destination'
   }
 ];
 
@@ -117,7 +137,7 @@ toggleFormBtn.addEventListener('click', () => {
     shipmentForm.classList.remove('form-open');
 
     toggleFormText.innerText =
-      'Створити заявку';
+      uiLabels.createRequest;
 
     toggleFormIcon.style.transform =
       'rotate(0deg)';
@@ -542,18 +562,51 @@ function populateSelect(select, options, placeholder) {
   });
 }
 
+function applyUiLabels() {
+
+  document.getElementById('product').placeholder =
+    uiLabels.product;
+
+  document.getElementById('comment').placeholder =
+    'Коментар';
+
+  document.getElementById('createBtn').innerText =
+    uiLabels.createRequest;
+
+  document.querySelector('.shipments-title').innerText =
+    uiLabels.shipmentsTitle;
+
+  if (!formOpened) {
+    toggleFormText.innerText = uiLabels.createRequest;
+  }
+
+  const dashboardUnitOption =
+    dashboardGroupBy.querySelector('option[value="unit"]');
+
+  const dashboardDestinationOption =
+    dashboardGroupBy.querySelector('option[value="destination"]');
+
+  if (dashboardUnitOption) {
+    dashboardUnitOption.innerText = uiLabels.unit;
+  }
+
+  if (dashboardDestinationOption) {
+    dashboardDestinationOption.innerText = uiLabels.destination;
+  }
+}
+
 function populateCreateOptions() {
 
   populateSelect(
     document.getElementById('unit'),
     shipmentOptions.units,
-    'Оберіть підрозділ'
+    uiLabels.chooseUnit
   );
 
   populateSelect(
     document.getElementById('destination'),
     shipmentOptions.destinations,
-    'Оберіть куди'
+    uiLabels.chooseDestination
   );
 }
 
@@ -570,6 +623,12 @@ async function loadShipmentOptions() {
     destinations: result.data.destinations || []
   };
 
+  uiLabels = {
+    ...DEFAULT_UI_LABELS,
+    ...(result.data.labels || {})
+  };
+
+  applyUiLabels();
   populateCreateOptions();
 }
 
@@ -629,40 +688,34 @@ async function createShipment() {
   const comment = document.getElementById('comment').value.trim();
 
   if (!product) {
-    showToast('Вкажіть тип забезпечення');
+    showToast(uiLabels.productRequired);
     return;
   }
 
   if (!validateLength(product, 2, 80)) {
-    showToast(
-      'Тип забезпечення повинен містити від 2 до 80 символів'
-    );
+    showToast(uiLabels.productLength);
 
     return;
   }
 
   if (!unit) {
-    showToast('Вкажіть підрозділ');
+    showToast(uiLabels.unitRequired);
     return;
   }
 
   if (!validateLength(unit, 2, 30)) {
-    showToast(
-      'Підрозділ повинен містити від 2 до 30 символів'
-    );
+    showToast(uiLabels.unitLength);
 
     return;
   }
 
   if (!destination) {
-    showToast('Вкажіть куди');
+    showToast(uiLabels.destinationRequired);
     return;
   }
 
   if (!validateLength(destination, 2, 180)) {
-    showToast(
-      'Поле "Куди" повинно містити від 2 до 180 символів'
-    );
+    showToast(uiLabels.destinationLength);
 
     return;
   }
@@ -696,7 +749,7 @@ async function createShipment() {
     shipmentForm.classList.remove('form-open');
 
     toggleFormText.innerText =
-      'Створити заявку';
+      uiLabels.createRequest;
 
     toggleFormIcon.style.transform =
       'rotate(0deg)';
@@ -785,13 +838,19 @@ function getDashboardFilterValues(key) {
 
 function getDashboardFilterLabel(key) {
 
-  const filter = DASHBOARD_FILTERS.find(item => {
-    return item.key === key;
-  });
+  if (key === 'unit') {
+    return uiLabels.unit;
+  }
 
-  return filter
-    ? filter.label
-    : key;
+  if (key === 'destination') {
+    return uiLabels.destination;
+  }
+
+  if (key === 'status') {
+    return 'Статус';
+  }
+
+  return key;
 }
 
 function getDashboardFilterRows() {
@@ -809,7 +868,7 @@ function buildFilterTypeOptions(selectedKey) {
         value="${escapeHtml(filter.key)}"
         ${filter.key === selectedKey ? 'selected' : ''}
       >
-        ${escapeHtml(filter.label)}
+        ${escapeHtml(getDashboardFilterLabel(filter.key))}
       </option>
     `)
     .join('');
@@ -1423,15 +1482,15 @@ function renderDetailsView(item) {
 
   return `
     <div>
-      <b>Куди:</b> ${escapeHtml(item.destination)}
+      <b>${escapeHtml(uiLabels.destination)}:</b> ${escapeHtml(item.destination)}
     </div>
 
     <div>
-      <b>Тип:</b> ${escapeHtml(item.product)}
+      <b>${escapeHtml(uiLabels.detailsProduct)}:</b> ${escapeHtml(item.product)}
     </div>
 
     <div>
-      <b>Підрозділ:</b> ${escapeHtml(item.unit || 'Не вказано')}
+      <b>${escapeHtml(uiLabels.unit)}:</b> ${escapeHtml(item.unit || 'Не вказано')}
     </div>
   
     <div>
@@ -1439,7 +1498,7 @@ function renderDetailsView(item) {
     </div>
   
     <div>
-      <b>Тип БПЛА:</b> ${escapeHtml(item.method || 'Не вказано')}
+      <b>${escapeHtml(uiLabels.method)}:</b> ${escapeHtml(item.method || 'Не вказано')}
     </div>
 
     <div>
@@ -1447,7 +1506,7 @@ function renderDetailsView(item) {
     </div>
 
     <div>
-      <b>Екіпаж:</b> ${escapeHtml(item.crew || 'Не вказано')}
+      <b>${escapeHtml(uiLabels.crew)}:</b> ${escapeHtml(item.crew || 'Не вказано')}
     </div>
   
     <div>
@@ -1490,7 +1549,7 @@ function renderEditForm(item) {
         type="text"
         class="edit-product"
         value="${escapeHtml(item.product)}"
-        placeholder="Тип забезпечення"
+        placeholder="${escapeHtml(uiLabels.product)}"
       >
 
       <div class="select-wrap">
@@ -1512,7 +1571,7 @@ function renderEditForm(item) {
         type="text"
         class="edit-method"
         value="${escapeHtml(item.method)}"
-        placeholder="Тип БПЛА"
+        placeholder="${escapeHtml(uiLabels.method)}"
       >
 
       <div class="edit-date-time-row">
@@ -1543,7 +1602,7 @@ function renderEditForm(item) {
         type="text"
         class="edit-crew"
         value="${escapeHtml(item.crew)}"
-        placeholder="Екіпаж"
+        placeholder="${escapeHtml(uiLabels.crew)}"
       >
 
       <div class="select-wrap">
@@ -1648,27 +1707,23 @@ function setupEditChangeTracking(item, details) {
 function validateEditData(data) {
 
   if (!data.product) {
-    showToast('Вкажіть тип забезпечення');
+    showToast(uiLabels.productRequired);
     return false;
   }
 
   if (!validateLength(data.product, 2, 80)) {
-    showToast(
-      'Тип забезпечення повинен містити від 2 до 80 символів'
-    );
+    showToast(uiLabels.productLength);
 
     return false;
   }
 
   if (!data.unit) {
-    showToast('Вкажіть підрозділ');
+    showToast(uiLabels.unitRequired);
     return false;
   }
 
   if (!validateLength(data.unit, 2, 30)) {
-    showToast(
-      'Підрозділ повинен містити від 2 до 30 символів'
-    );
+    showToast(uiLabels.unitLength);
 
     return false;
   }
@@ -1677,9 +1732,7 @@ function validateEditData(data) {
     data.method &&
     !validateLength(data.method, 2, 40)
   ) {
-    showToast(
-      'Тип БПЛА повинен містити від 2 до 40 символів'
-    );
+    showToast(uiLabels.methodLength);
 
     return false;
   }
@@ -1688,9 +1741,7 @@ function validateEditData(data) {
     data.crew &&
     !validateLength(data.crew, 2, 40)
   ) {
-    showToast(
-      'Екіпаж повинен містити від 2 до 40 символів'
-    );
+    showToast(uiLabels.crewLength);
 
     return false;
   }
@@ -1712,14 +1763,12 @@ function validateEditData(data) {
   }
 
   if (!data.destination) {
-    showToast('Вкажіть куди');
+    showToast(uiLabels.destinationRequired);
     return false;
   }
 
   if (!validateLength(data.destination, 2, 180)) {
-    showToast(
-      'Поле "Куди" повинно містити від 2 до 180 символів'
-    );
+    showToast(uiLabels.destinationLength);
 
     return false;
   }
@@ -1851,16 +1900,12 @@ function renderShipments(items) {
         <div class="card-summary">
       
           <div class="summary-item card-destination">
-            <span class="drone-icon" aria-hidden="true">
+            <span class="item-icon" aria-hidden="true">
               <svg viewBox="0 0 64 64" focusable="false">
-                <circle cx="16" cy="16" r="12"></circle>
-                <circle cx="48" cy="16" r="12"></circle>
-                <circle cx="16" cy="48" r="12"></circle>
-                <circle cx="48" cy="48" r="12"></circle>
-                <path d="M22 22 32 32 42 22"></path>
-                <path d="M22 42 32 32 42 42"></path>
-                <rect x="26" y="20" width="12" height="24" rx="3"></rect>
-                <circle cx="32" cy="32" r="2.8"></circle>
+                <rect x="12" y="12" width="40" height="40" rx="10"></rect>
+                <path d="M24 25h16"></path>
+                <path d="M24 32h16"></path>
+                <path d="M24 39h10"></path>
               </svg>
             </span>
             ${escapeHtml(item.destination)}
