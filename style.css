@@ -781,6 +781,35 @@ textarea:focus {
   margin-top: 12px;
 }
 
+.dashboard-zero-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  width: fit-content;
+  max-width: 100%;
+
+  margin-top: 10px;
+
+  color: #555;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.dashboard-zero-toggle input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+
+  accent-color: #555;
+
+  cursor: pointer;
+}
+
 .dashboard-group span {
   font-size: 12px;
   font-weight: 600;
@@ -903,6 +932,10 @@ textarea:focus {
   background: #777;
 
   border-radius: inherit;
+}
+
+.dashboard-bar-fill.is-zero {
+  min-width: 0;
 }
 
 .dashboard-bar-fill.status-success {
@@ -1680,6 +1713,12 @@ html {
 
   .dashboard-group {
     margin-top: 8px;
+  }
+
+  .dashboard-zero-toggle {
+    margin-top: 8px;
+
+    font-size: 12px;
   }
 
   .dashboard-result {
